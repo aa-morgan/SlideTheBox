@@ -27,8 +27,6 @@ class BasicLevelProposer {
         
         let level = BasicLevel(numBlocksX: numBlocksX, numBlocksY: numBlocksY)
         
-        blocksReal = Array(repeating: Array(repeating: 0, count: numBlocksX), count: numBlocksY)
-        
         let numBlocks = Int((numBlocksX * numBlocksY) / 4)
         var startPosition = Array<Int>()
         var endPosition = Array<Int>()

@@ -32,7 +32,8 @@ class MainMenuScene: SKScene {
             if atPoint(location) == playBtn {
                 let gameplay = GameplayScene(fileNamed: "GameplayScene")
                 gameplay!.scaleMode = .aspectFill
-                self.view?.presentScene(gameplay!, transition: SKTransition.doorway(withDuration: TimeInterval(1.5)))
+                //self.view?.presentScene(gameplay!, transition: SKTransition.doorway(withDuration: TimeInterval(1.5)))
+                self.view?.presentScene(gameplay!)
             }
             
             if atPoint(location) == scoreBtn {

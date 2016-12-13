@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F35167311DFF8E940096582F /* DifficultyCriteria.swift in Sources */ = {isa = PBXBuildFile; fileRef = F35167301DFF8E940096582F /* DifficultyCriteria.swift */; };
 		F380A7761DFB356B002BD1AF /* BasicLevelProposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F380A7751DFB356B002BD1AF /* BasicLevelProposer.swift */; };
 		F380A7781DFB35AA002BD1AF /* BasicLevelSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F380A7771DFB35AA002BD1AF /* BasicLevelSolver.swift */; };
 		F380A77A1DFB3AE0002BD1AF /* BasicLevelSolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = F380A7791DFB3AE0002BD1AF /* BasicLevelSolution.swift */; };
@@ -46,6 +47,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F35167301DFF8E940096582F /* DifficultyCriteria.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DifficultyCriteria.swift; sourceTree = "<group>"; };
 		F380A7751DFB356B002BD1AF /* BasicLevelProposer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicLevelProposer.swift; sourceTree = "<group>"; };
 		F380A7771DFB35AA002BD1AF /* BasicLevelSolver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicLevelSolver.swift; sourceTree = "<group>"; };
 		F380A7791DFB3AE0002BD1AF /* BasicLevelSolution.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicLevelSolution.swift; sourceTree = "<group>"; };
@@ -170,6 +172,7 @@
 				F380A7771DFB35AA002BD1AF /* BasicLevelSolver.swift */,
 				F380A7791DFB3AE0002BD1AF /* BasicLevelSolution.swift */,
 				F3D2EA751DFDEDEE00FAE267 /* LevelGenerator.swift */,
+				F35167301DFF8E940096582F /* DifficultyCriteria.swift */,
 			);
 			name = "Level classes";
 			sourceTree = "<group>";
@@ -360,6 +363,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3F929D51DF786320000FFB1 /* GameplayScene.swift in Sources */,
+				F35167311DFF8E940096582F /* DifficultyCriteria.swift in Sources */,
 				F3D2EA761DFDEDEE00FAE267 /* LevelGenerator.swift in Sources */,
 				F3B4DF6E1DF4899700BA4725 /* GameViewController.swift in Sources */,
 				F380A77A1DFB3AE0002BD1AF /* BasicLevelSolution.swift in Sources */,

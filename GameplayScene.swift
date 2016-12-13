@@ -12,10 +12,13 @@ class GameplayScene: SKScene {
     
     var backBtn = SKSpriteNode()
     var playerBox = SKSpriteNode()
+    var endBlock = SKSpriteNode()
     
     let levelType = "Basic"
     var level = BasicLevel()
     var levelGenerator = LevelGenerator()
+    var difficulty = DifficultyCriteria()
+    let minMoves = 4
     
     var numBlocksX = Int()
     var numBlocksY = Int()
@@ -24,6 +27,7 @@ class GameplayScene: SKScene {
     var menuBarHeight = CGFloat(100)
     
     var currentPosition = Array<Int>()
+    var levelFinished = Bool()
     
     var isMoving = false
     var canMove = true
@@ -45,7 +49,7 @@ class GameplayScene: SKScene {
             if atPoint(location) == backBtn {
                 let mainMenu = MainMenuScene(fileNamed: "MainMenuScene")
                 mainMenu!.scaleMode = .aspectFill
-                self.view?.presentScene(mainMenu!, transition: SKTransition.doorway(withDuration: TimeInterval(1.3)))
+                self.view?.presentScene(mainMenu!)
             }
             
         }
@@ -75,9 +79,11 @@ class GameplayScene: SKScene {
     }
     
     func setupLevel() {
-        levelGenerator = LevelGenerator(levelType: levelType, numBlocksX: numBlocksX, numBlocksY: numBlocksY)
+        difficulty = DifficultyCriteria(minMoves: minMoves)
+        levelGenerator = LevelGenerator(levelType: levelType, numBlocksX: numBlocksX, numBlocksY: numBlocksY, difficulty: difficulty)
         level = levelGenerator.generate()
         currentPosition = level.getStartPosition()
+        levelFinished = false
         
         var rowIndex = 0
         var columnIndex = 0
@@ -85,8 +91,8 @@ class GameplayScene: SKScene {
             for blockType in row {
                 if blockType == 1 { // Add block box
                     let blockBoxSprite = SKSpriteNode(imageNamed: "Block Box")
-                    blockBoxSprite.anchorPoint = CGPoint(x: 0, y: 1)
                     blockBoxSprite.size = CGSize(width: blockWidth, height: blockHeight)
+                    blockBoxSprite.anchorPoint = CGPoint(x: 0, y: 1)
                     blockBoxSprite.name = "Block Box"
                     blockBoxSprite.position = CGPoint(x: CGFloat(columnIndex) * blockWidth, y: -(CGFloat(rowIndex) * blockHeight))
                     blockBoxSprite.zPosition = 5
@@ -97,6 +103,8 @@ class GameplayScene: SKScene {
                     
                 } else if blockType == 8 { // Setup player box
                     setupPlayerBox(rowIndex: rowIndex, columnIndex: columnIndex)
+                } else if blockType == 9 { // Setup end block
+                    setupEndBlock(rowIndex: rowIndex, columnIndex: columnIndex)
                 }
                 columnIndex += 1
             }
@@ -109,13 +117,24 @@ class GameplayScene: SKScene {
     
     func setupPlayerBox(rowIndex: Int, columnIndex: Int) {
         playerBox = SKSpriteNode(imageNamed: "Player Box")
-        playerBox.anchorPoint = CGPoint(x: 0, y: 1)
         playerBox.size = CGSize(width: blockWidth, height: blockHeight)
+        playerBox.anchorPoint = CGPoint(x: 0, y: 1)
         playerBox.name = "Player Box"
         playerBox.position = CGPoint(x: CGFloat(columnIndex) * blockWidth, y: -(CGFloat(rowIndex) * blockHeight))
         playerBox.zPosition = 5
         
         self.addChild(playerBox)
+    }
+    
+    func setupEndBlock(rowIndex: Int, columnIndex: Int) {
+        endBlock = SKSpriteNode(imageNamed: "End Block")
+        endBlock.size = CGSize(width: blockWidth, height: blockHeight)
+        endBlock.anchorPoint = CGPoint(x: 0, y: 1)
+        endBlock.name = "End Block"
+        endBlock.position = CGPoint(x: CGFloat(columnIndex) * blockWidth, y: -(CGFloat(rowIndex) * blockHeight))
+        endBlock.zPosition = 5
+        
+        self.addChild(endBlock)
     }
     
     func setupGestures() {
@@ -137,54 +156,44 @@ class GameplayScene: SKScene {
     
     func handleSwipe(sender: UISwipeGestureRecognizer) {
         
-        var numBlocks = Int()
+        var newPosition = Array<Int>()
+        var numMoves = Int()
         var direction = String()
         
         if (!isMoving && canMove) {
             if (sender.direction.rawValue == 1){
                 direction = "right"
-                numBlocks = level.calculateMove(position: currentPosition, direction: direction)
             } else if (sender.direction.rawValue == 2){
                 direction = "left"
-                numBlocks = -level.calculateMove(position: currentPosition, direction: direction)
             } else if (sender.direction.rawValue == 4){
                 direction = "up"
-                numBlocks = level.calculateMove(position: currentPosition, direction: direction)
             } else if (sender.direction.rawValue == 8){
                 direction = "down"
-                numBlocks = -level.calculateMove(position: currentPosition, direction: direction)
             }
+            
+            (newPosition, numMoves, levelFinished) = level.calculateMove(position: currentPosition, direction: direction)
 
-            moveBox(direction: direction, numBlocks: numBlocks)
-            updateCurrentPosition(direction: direction, numMoves: numBlocks)
+            currentPosition = newPosition
+            moveBox(toPosition: currentPosition, numBlocks: numMoves)
         }
         
     }
     
-    func moveBox(direction: String, numBlocks: Int) {
+    func moveBox(toPosition: Array<Int>, numBlocks: Int) {
         
         let perBlockTime = CGFloat(0.2)
+        let moveTime = TimeInterval(perBlockTime * abs(CGFloat(numBlocks)))
+        var moveToPosition = CGPoint()
         var moveAnimation = SKAction();
         
         isMoving = true
         
-        if direction == "left" || direction == "right" {
-            moveAnimation = SKAction.move(by: CGVector(dx: CGFloat(numBlocks) * blockHeight, dy: 0), duration: TimeInterval(perBlockTime * abs(CGFloat(numBlocks))))
-        } else if direction == "up" || direction == "down" {
-            moveAnimation = SKAction.move(by: CGVector(dx: 0, dy: CGFloat(numBlocks) * blockWidth), duration: TimeInterval(perBlockTime * abs(CGFloat(numBlocks))))
-        }
+        moveToPosition = CGPoint(x:  CGFloat(toPosition[0])*blockWidth,
+                                 y: -CGFloat(toPosition[1])*blockHeight)
+        
+        moveAnimation = SKAction.move(to: moveToPosition, duration: moveTime)
         
         playerBox.run(moveAnimation, completion: moveComplete)
-    }
-    
-    func updateCurrentPosition(direction: String, numMoves: Int) {
-        
-        if direction == "left" || direction == "right" {
-            currentPosition[0] += numMoves
-        } else if direction == "up" || direction == "down" {
-            currentPosition[1] -= numMoves
-        }
-        
     }
     
     func moveComplete() -> Void {

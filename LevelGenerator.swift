@@ -13,6 +13,7 @@ class LevelGenerator {
     var level = BasicLevel()
     var levelProposer = BasicLevelProposer()
     var levelSolver = BasicLevelSolver()
+    var difficulty = DifficultyCriteria()
     
     var numBlocksX = Int()
     var numBlocksY = Int()
@@ -20,9 +21,11 @@ class LevelGenerator {
     init() {
     }
     
-    init(levelType: String, numBlocksX: Int, numBlocksY: Int) {
+    init(levelType: String, numBlocksX: Int, numBlocksY: Int, difficulty: DifficultyCriteria) {
         self.numBlocksX = numBlocksX
         self.numBlocksY = numBlocksY
+        
+        self.difficulty = difficulty
         
         if levelType == "Basic" {
             
@@ -35,9 +38,28 @@ class LevelGenerator {
     }
     
     func generate() -> BasicLevel {
+        
+        var levelSolvable = Bool()
+        var levelStuckable = Bool()
+        var levelMinMoves = Int()
+        var levelsProposed = 0
+        
+        repeat {
+
+            level = levelProposer.propose()
+            level = levelSolver.solve(level: level)
             
-        level = levelProposer.propose()
-        level = levelSolver.solve(level: level)
+            levelSolvable = level.isSolvable()
+            levelStuckable = level.isStuckable()
+            levelMinMoves = level.getMinMoves()
+            
+            levelsProposed += 1
+        } while !(  levelSolvable == true &&
+                    levelStuckable == false &&
+                    levelMinMoves >= difficulty.getMinMoves())
+        
+        print("Levels proposed: ", levelsProposed)
+        print("Min Moves: ", level.getMinMoves())
 
         return level
     }
