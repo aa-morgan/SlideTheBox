@@ -11,13 +11,15 @@ import SpriteKit
 class GameplayScene: SKScene {
     
     var backBtn = SKSpriteNode()
+    var hintBtn = SKSpriteNode()
     var playerBox = SKSpriteNode()
     var endBlock = SKSpriteNode()
     
     let levelType = "Basic"
     var level = BasicLevel()
     var levelGenerator = LevelGenerator()
-    var difficulty = DifficultyCriteria()
+    var levelSolver = BasicLevelSolver()
+    var difficulty = BasicDifficultyCriteria()
     let minMoves = 4
     
     var numBlocksX = Int()
@@ -50,6 +52,8 @@ class GameplayScene: SKScene {
                 let mainMenu = MainMenuScene(fileNamed: "MainMenuScene")
                 mainMenu!.scaleMode = .aspectFill
                 self.view?.presentScene(mainMenu!)
+            } else if atPoint(location) == hintBtn {
+                hintButtonPressed()
             }
             
         }
@@ -76,10 +80,11 @@ class GameplayScene: SKScene {
     
     func setupMenuBar() {
         backBtn = self.childNode(withName: "Back Button") as! SKSpriteNode
+        hintBtn = self.childNode(withName: "Hint Button") as! SKSpriteNode
     }
     
     func setupLevel() {
-        difficulty = DifficultyCriteria(minMoves: minMoves)
+        difficulty = BasicDifficultyCriteria(difficulty: "easy")
         levelGenerator = LevelGenerator(levelType: levelType, numBlocksX: numBlocksX, numBlocksY: numBlocksY, difficulty: difficulty)
         level = levelGenerator.generate()
         currentPosition = level.getStartPosition()
@@ -121,7 +126,7 @@ class GameplayScene: SKScene {
         playerBox.anchorPoint = CGPoint(x: 0, y: 1)
         playerBox.name = "Player Box"
         playerBox.position = CGPoint(x: CGFloat(columnIndex) * blockWidth, y: -(CGFloat(rowIndex) * blockHeight))
-        playerBox.zPosition = 5
+        playerBox.zPosition = 6
         
         self.addChild(playerBox)
     }
@@ -154,29 +159,34 @@ class GameplayScene: SKScene {
         self.view?.addGestureRecognizer(swipeDown)
     }
     
+    func hintButtonPressed() {
+        handleMove(direction: levelSolver.solveForNextMove(level: level, customStart: currentPosition))
+    }
+    
     func handleSwipe(sender: UISwipeGestureRecognizer) {
         
+        if (sender.direction.rawValue == 1){
+            handleMove(direction: "right")
+        } else if (sender.direction.rawValue == 2){
+            handleMove(direction: "left")
+        } else if (sender.direction.rawValue == 4){
+            handleMove(direction: "up")
+        } else if (sender.direction.rawValue == 8){
+            handleMove(direction: "down")
+        }
+        
+    }
+    
+    func handleMove(direction: String) {
         var newPosition = Array<Int>()
         var numMoves = Int()
-        var direction = String()
         
         if (!isMoving && canMove) {
-            if (sender.direction.rawValue == 1){
-                direction = "right"
-            } else if (sender.direction.rawValue == 2){
-                direction = "left"
-            } else if (sender.direction.rawValue == 4){
-                direction = "up"
-            } else if (sender.direction.rawValue == 8){
-                direction = "down"
-            }
-            
             (newPosition, numMoves, levelFinished) = level.calculateMove(position: currentPosition, direction: direction)
-
+            
             currentPosition = newPosition
             moveBox(toPosition: currentPosition, numBlocks: numMoves)
         }
-        
     }
     
     func moveBox(toPosition: Array<Int>, numBlocks: Int) {

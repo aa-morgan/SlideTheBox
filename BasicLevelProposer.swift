@@ -23,11 +23,10 @@ class BasicLevelProposer {
         self.numBlocksY = numBlocksY
     }
     
-    func propose() -> BasicLevel {
+    func propose(numBlocks: Int) -> BasicLevel {
         
         let level = BasicLevel(numBlocksX: numBlocksX, numBlocksY: numBlocksY)
-        
-        let numBlocks = Int((numBlocksX * numBlocksY) / 4)
+    
         var startPosition = Array<Int>()
         var endPosition = Array<Int>()
         (blocksReal, startPosition, endPosition) = proposeBlocksReal(numBlocks: numBlocks)

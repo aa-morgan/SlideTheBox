@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F35167311DFF8E940096582F /* DifficultyCriteria.swift in Sources */ = {isa = PBXBuildFile; fileRef = F35167301DFF8E940096582F /* DifficultyCriteria.swift */; };
+		F33387DA1E06065600FC9092 /* LevelGeneratorStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = F33387D91E06065600FC9092 /* LevelGeneratorStatistics.swift */; };
+		F35167311DFF8E940096582F /* BasicDifficultyCriteria.swift in Sources */ = {isa = PBXBuildFile; fileRef = F35167301DFF8E940096582F /* BasicDifficultyCriteria.swift */; };
 		F380A7761DFB356B002BD1AF /* BasicLevelProposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F380A7751DFB356B002BD1AF /* BasicLevelProposer.swift */; };
 		F380A7781DFB35AA002BD1AF /* BasicLevelSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F380A7771DFB35AA002BD1AF /* BasicLevelSolver.swift */; };
 		F380A77A1DFB3AE0002BD1AF /* BasicLevelSolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = F380A7791DFB3AE0002BD1AF /* BasicLevelSolution.swift */; };
@@ -47,7 +48,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		F35167301DFF8E940096582F /* DifficultyCriteria.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DifficultyCriteria.swift; sourceTree = "<group>"; };
+		F33387D91E06065600FC9092 /* LevelGeneratorStatistics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelGeneratorStatistics.swift; sourceTree = "<group>"; };
+		F35167301DFF8E940096582F /* BasicDifficultyCriteria.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicDifficultyCriteria.swift; sourceTree = "<group>"; };
 		F380A7751DFB356B002BD1AF /* BasicLevelProposer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicLevelProposer.swift; sourceTree = "<group>"; };
 		F380A7771DFB35AA002BD1AF /* BasicLevelSolver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicLevelSolver.swift; sourceTree = "<group>"; };
 		F380A7791DFB3AE0002BD1AF /* BasicLevelSolution.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicLevelSolution.swift; sourceTree = "<group>"; };
@@ -100,6 +102,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F33387DB1E06183A00FC9092 /* Basic */ = {
+			isa = PBXGroup;
+			children = (
+				F3F929D61DF7863D0000FFB1 /* BasicLevel.swift */,
+				F380A7751DFB356B002BD1AF /* BasicLevelProposer.swift */,
+				F380A7771DFB35AA002BD1AF /* BasicLevelSolver.swift */,
+				F380A7791DFB3AE0002BD1AF /* BasicLevelSolution.swift */,
+				F35167301DFF8E940096582F /* BasicDifficultyCriteria.swift */,
+			);
+			name = Basic;
+			sourceTree = "<group>";
+		};
 		F3B4DF591DF4899700BA4725 = {
 			isa = PBXGroup;
 			children = (
@@ -167,12 +181,9 @@
 		F3F929B21DF785790000FFB1 /* Level classes */ = {
 			isa = PBXGroup;
 			children = (
-				F3F929D61DF7863D0000FFB1 /* BasicLevel.swift */,
-				F380A7751DFB356B002BD1AF /* BasicLevelProposer.swift */,
-				F380A7771DFB35AA002BD1AF /* BasicLevelSolver.swift */,
-				F380A7791DFB3AE0002BD1AF /* BasicLevelSolution.swift */,
 				F3D2EA751DFDEDEE00FAE267 /* LevelGenerator.swift */,
-				F35167301DFF8E940096582F /* DifficultyCriteria.swift */,
+				F33387D91E06065600FC9092 /* LevelGeneratorStatistics.swift */,
+				F33387DB1E06183A00FC9092 /* Basic */,
 			);
 			name = "Level classes";
 			sourceTree = "<group>";
@@ -363,10 +374,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3F929D51DF786320000FFB1 /* GameplayScene.swift in Sources */,
-				F35167311DFF8E940096582F /* DifficultyCriteria.swift in Sources */,
+				F35167311DFF8E940096582F /* BasicDifficultyCriteria.swift in Sources */,
 				F3D2EA761DFDEDEE00FAE267 /* LevelGenerator.swift in Sources */,
 				F3B4DF6E1DF4899700BA4725 /* GameViewController.swift in Sources */,
 				F380A77A1DFB3AE0002BD1AF /* BasicLevelSolution.swift in Sources */,
+				F33387DA1E06065600FC9092 /* LevelGeneratorStatistics.swift in Sources */,
 				F3F929D31DF7861F0000FFB1 /* MainMenuScene.swift in Sources */,
 				F380A7761DFB356B002BD1AF /* BasicLevelProposer.swift in Sources */,
 				F380A7781DFB35AA002BD1AF /* BasicLevelSolver.swift in Sources */,

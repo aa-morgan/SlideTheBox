@@ -133,6 +133,10 @@ class BasicLevel {
         self.blocksExploration[position[1]][position[0]] = value
     }
     
+    func resetBlocksExploration() {
+        self.blocksExploration = Array(repeating: Array(repeating: 0, count: numBlocksX), count: numBlocksY)
+    }
+    
     func getStartPosition() -> Array<Int> {
         return self.startPosition
     }
@@ -149,8 +153,8 @@ class BasicLevel {
         self.endPosition = position
     }
     
-    func getBlockDensity() -> CGFloat {
-        return CGFloat(0)
+    func getBlockSpaceRatio() -> Float {
+        return Float(0)
     }
     
     func getMinMoves() -> Int {
