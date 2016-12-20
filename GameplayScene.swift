@@ -10,8 +10,13 @@ import SpriteKit
 
 class GameplayScene: SKScene {
     
-    var backBtn = SKSpriteNode()
+    var pauseBtn = SKSpriteNode()
+    var homeBtn = SKSpriteNode()
+    var resumeBtn = SKSpriteNode()
     var hintBtn = SKSpriteNode()
+    var newLevelBtn = SKSpriteNode()
+    var popupPanel = SKSpriteNode()
+    
     var playerBox = SKSpriteNode()
     var endBlock = SKSpriteNode()
     
@@ -20,19 +25,20 @@ class GameplayScene: SKScene {
     var levelGenerator = LevelGenerator()
     var levelSolver = BasicLevelSolver()
     var difficulty = BasicDifficultyCriteria()
-    let minMoves = 4
     
     var numBlocksX = Int()
     var numBlocksY = Int()
-    var blockWidth = CGFloat();
-    var blockHeight = CGFloat();
-    var menuBarHeight = CGFloat(100)
+    var blockWidth = CGFloat()
+    var blockHeight = CGFloat()
+    let menuBarHeight = CGFloat(100)
     
     var currentPosition = Array<Int>()
-    var levelFinished = Bool()
     
-    var isMoving = false
-    var canMove = true
+    var isMoving = Bool()
+    var levelPaused = Bool()
+    var levelComplete = Bool()
+    
+    let perBlockTime = CGFloat(0.1)
     
     override func didMove(to view: SKView) {
         initialise()
@@ -45,17 +51,37 @@ class GameplayScene: SKScene {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
         for touch in touches {
-            
             let location = touch.location(in: self)
             
-            if atPoint(location) == backBtn {
+            if atPoint(location).name == "Pause" {
+                if (!levelPaused && !levelComplete) {
+                    createPausePanel()
+                }
+            }
+            
+            if atPoint(location).name == "Home" {
                 let mainMenu = MainMenuScene(fileNamed: "MainMenuScene")
                 mainMenu!.scaleMode = .aspectFill
                 self.view?.presentScene(mainMenu!)
-            } else if atPoint(location) == hintBtn {
-                hintButtonPressed()
             }
             
+            if atPoint(location).name == "Resume" {
+                popupPanel.removeFromParent()
+                self.scene?.isPaused = false
+                levelPaused = false
+            }
+            
+            if atPoint(location).name == "Hint" {
+                if (!levelPaused && !levelComplete) {
+                    hintButtonPressed()
+                }
+            }
+            
+            if atPoint(location).name == "New" {
+                let gameplay = GameplayScene(fileNamed: "GameplayScene")
+                gameplay!.scaleMode = .aspectFill
+                self.view?.presentScene(gameplay!)
+            }
         }
     }
     
@@ -79,8 +105,8 @@ class GameplayScene: SKScene {
     }
     
     func setupMenuBar() {
-        backBtn = self.childNode(withName: "Back Button") as! SKSpriteNode
-        hintBtn = self.childNode(withName: "Hint Button") as! SKSpriteNode
+        pauseBtn = self.childNode(withName: "Pause") as! SKSpriteNode
+        hintBtn = self.childNode(withName: "Hint") as! SKSpriteNode
     }
     
     func setupLevel() {
@@ -88,7 +114,10 @@ class GameplayScene: SKScene {
         levelGenerator = LevelGenerator(levelType: levelType, numBlocksX: numBlocksX, numBlocksY: numBlocksY, difficulty: difficulty)
         level = levelGenerator.generate()
         currentPosition = level.getStartPosition()
-        levelFinished = false
+        
+        isMoving = false
+        levelPaused = false
+        levelComplete = false
         
         var rowIndex = 0
         var columnIndex = 0
@@ -184,8 +213,8 @@ class GameplayScene: SKScene {
         var newPosition = Array<Int>()
         var numMoves = Int()
         
-        if (!isMoving && canMove) {
-            (newPosition, numMoves, levelFinished) = level.calculateMove(position: currentPosition, direction: direction)
+        if (!isMoving && !levelPaused && !levelComplete) {
+            (newPosition, numMoves, levelComplete) = level.calculateMove(position: currentPosition, direction: direction)
             
             currentPosition = newPosition
             moveBox(toPosition: currentPosition, numBlocks: numMoves)
@@ -193,8 +222,7 @@ class GameplayScene: SKScene {
     }
     
     func moveBox(toPosition: Array<Int>, numBlocks: Int) {
-        
-        let perBlockTime = CGFloat(0.2)
+    
         let moveTime = TimeInterval(perBlockTime * abs(CGFloat(numBlocks)))
         var moveToPosition = CGPoint()
         var moveAnimation = SKAction();
@@ -211,5 +239,95 @@ class GameplayScene: SKScene {
     
     func moveComplete() -> Void {
         isMoving = false
+        
+        if (levelComplete) {
+            createLevelCompletePanel()
+        }
+    }
+    
+    func createPausePanel() {
+        levelPaused = true
+        self.scene?.isPaused = true
+        
+        popupPanel = SKSpriteNode(imageNamed: "Popup Panel")
+        popupPanel.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        popupPanel.position = CGPoint(x: self.size.width/2, y: -self.size.height/2)
+        popupPanel.zPosition = 11
+        
+        let label = SKLabelNode()
+        let resume = SKSpriteNode(imageNamed: "Play")
+        let new = SKSpriteNode(imageNamed: "New")
+        let quit = SKSpriteNode(imageNamed: "Home")
+    
+        label.name = "Pause Label"
+        label.fontName = "Chalkboard"
+        label.fontSize = 96
+        label.text = "Paused"
+        label.position = CGPoint(x: 0, y: 120)
+        label.zPosition = 11
+        
+        resume.name = "Resume"
+        resume.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        resume.position = CGPoint(x: -250, y: 0)
+        resume.setScale(0.75)
+        resume.zPosition = 12
+        
+        new.name = "New"
+        new.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        new.position = CGPoint(x: 0, y: 0)
+        new.setScale(0.75)
+        new.zPosition = 12
+        
+        quit.name = "Home"
+        quit.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        quit.position = CGPoint(x: 250, y: 0)
+        quit.setScale(0.75)
+        quit.zPosition = 12
+        
+        popupPanel.addChild(label)
+        popupPanel.addChild(resume)
+        popupPanel.addChild(new)
+        popupPanel.addChild(quit)
+        
+        self.addChild(popupPanel)
+    }
+    
+    func createLevelCompletePanel() {
+        levelComplete = true
+        self.scene?.isPaused = true
+        
+        popupPanel = SKSpriteNode(imageNamed: "Popup Panel")
+        popupPanel.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        popupPanel.position = CGPoint(x: self.size.width/2, y: -self.size.height/2)
+        popupPanel.zPosition = 11
+        
+        let label = SKLabelNode()
+        let new = SKSpriteNode(imageNamed: "New")
+        let quit = SKSpriteNode(imageNamed: "Home")
+        
+        label.name = "Level Complete Label"
+        label.fontName = "Chalkboard"
+        label.fontSize = 96
+        label.text = "Level Complete"
+        label.position = CGPoint(x: 0, y: 120)
+        label.zPosition = 11
+        
+        new.name = "New"
+        new.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        new.position = CGPoint(x: -150, y: 0)
+        new.setScale(0.75)
+        new.zPosition = 12
+        
+        quit.name = "Home"
+        quit.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        quit.position = CGPoint(x: 150, y: 0)
+        quit.setScale(0.75)
+        quit.zPosition = 12
+        
+        popupPanel.addChild(label)
+        popupPanel.addChild(new)
+        popupPanel.addChild(quit)
+        
+        self.addChild(popupPanel)
     }
 }

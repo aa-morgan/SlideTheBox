@@ -57,7 +57,7 @@ class MainMenuScene: SKScene {
     func getLabel() {
         title = self.childNode(withName: "Title Label") as! SKLabelNode
         
-        title.fontName = "RosewoodStd-Regular";
+        title.fontName = "RosewoodStd-Regular"
         title.fontSize = 120
         title.text = "Slide the Box"
         
