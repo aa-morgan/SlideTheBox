@@ -113,6 +113,10 @@ class BasicLevel {
         return self.blocksReal
     }
     
+    func getBlocksRealValue(position: Array<Int>) -> Int {
+        return self.blocksReal[position[1]][position[0]]
+    }
+    
     func setBlocksReal(blocks: Array<Array<Int>>) {
         self.blocksReal = blocks
     }
@@ -162,6 +166,15 @@ class BasicLevel {
             return getBlocksExplorationValue(position: getEndPosition()) - 1
         } else {
             return -1
+        }
+    }
+    
+    func positionInBounds(position: Array<Int>) -> Bool {
+        if (position[0] >= 0 && position[0] < blocksReal[0].count &&
+            position[1] >= 0 && position[1] < blocksReal.count) {
+            return true
+        } else {
+            return false
         }
     }
     

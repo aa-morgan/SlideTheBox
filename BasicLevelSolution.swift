@@ -10,8 +10,9 @@ import Foundation
 
 class BasicLevelSolution {
     
-    var levelMinMoves = Int()
-    var moveSequenceToFinish = [Int]()
+    var minMoves = Int()
+    var moveSequence = Array<Array<Int>>()
+    var moveSequenceDistances = Array<Int>()
     
     init() {
 

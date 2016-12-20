@@ -160,7 +160,10 @@ class GameplayScene: SKScene {
     }
     
     func hintButtonPressed() {
-        handleMove(direction: levelSolver.solveForNextMove(level: level, customStart: currentPosition))
+        let direction = levelSolver.solveForNextMove(level: level, customStart: currentPosition)
+        if (direction != "none") {
+            handleMove(direction: direction)
+        }
     }
     
     func handleSwipe(sender: UISwipeGestureRecognizer) {
