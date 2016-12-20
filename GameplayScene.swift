@@ -252,6 +252,7 @@ class GameplayScene: SKScene {
         popupPanel = SKSpriteNode(imageNamed: "Popup Panel")
         popupPanel.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         popupPanel.position = CGPoint(x: self.size.width/2, y: -self.size.height/2)
+        popupPanel.size = CGSize(width: 800, height: 500)
         popupPanel.zPosition = 11
         
         let label = SKLabelNode()
@@ -268,20 +269,20 @@ class GameplayScene: SKScene {
         
         resume.name = "Resume"
         resume.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        resume.position = CGPoint(x: -250, y: 0)
-        resume.setScale(0.75)
+        resume.position = CGPoint(x: -250, y: -50)
+        resume.size = CGSize(width: 200, height: 200)
         resume.zPosition = 12
         
         new.name = "New"
         new.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        new.position = CGPoint(x: 0, y: 0)
-        new.setScale(0.75)
+        new.position = CGPoint(x: 0, y: -50)
+        new.size = CGSize(width: 200, height: 200)
         new.zPosition = 12
         
         quit.name = "Home"
         quit.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        quit.position = CGPoint(x: 250, y: 0)
-        quit.setScale(0.75)
+        quit.position = CGPoint(x: 250, y: -50)
+        quit.size = CGSize(width: 200, height: 200)
         quit.zPosition = 12
         
         popupPanel.addChild(label)
@@ -299,6 +300,7 @@ class GameplayScene: SKScene {
         popupPanel = SKSpriteNode(imageNamed: "Popup Panel")
         popupPanel.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         popupPanel.position = CGPoint(x: self.size.width/2, y: -self.size.height/2)
+        popupPanel.size = CGSize(width: 800, height: 500)
         popupPanel.zPosition = 11
         
         let label = SKLabelNode()
@@ -314,14 +316,14 @@ class GameplayScene: SKScene {
         
         new.name = "New"
         new.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        new.position = CGPoint(x: -150, y: 0)
-        new.setScale(0.75)
+        new.position = CGPoint(x: -150, y: -50)
+        new.size = CGSize(width: 200, height: 200)
         new.zPosition = 12
         
         quit.name = "Home"
         quit.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        quit.position = CGPoint(x: 150, y: 0)
-        quit.setScale(0.75)
+        quit.position = CGPoint(x: 150, y: -50)
+        quit.size = CGSize(width: 200, height: 200)
         quit.zPosition = 12
         
         popupPanel.addChild(label)
