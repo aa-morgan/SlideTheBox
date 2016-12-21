@@ -34,6 +34,7 @@ class BasicLevelProposer {
         level.setBlocksReal(blocks: blocksReal)
         level.setStartPosition(position: startPosition)
         level.setEndPosition(position: endPosition)
+        level.setNumBlockBlocks(number: numBlocks)
         
         return level
     }

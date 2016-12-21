@@ -12,6 +12,9 @@ class BasicLevel {
     
     var blocksReal = Array<Array<Int>>()
     var blocksExploration = Array<Array<Int>>()
+    var numBlockBlocks = Int()
+    var routePositions = Array<Array<Int>>()
+    var routeDirections = Array<String>()
     
     private var numBlocksX = Int()
     private var numBlocksY = Int()
@@ -83,6 +86,24 @@ class BasicLevel {
         }
         
             return (newPosition: newPosition, numMoves: numMoves, endBlock: endBlock)
+    }
+    
+    func twoDimMax(array: Array<Array<Int>>) -> (value: Int, index: Array<Int>) {
+        
+        var globalMax = 0
+        var globalIndex = Array<Int>()
+        
+        var row = 0
+        for curRow in array {
+            let tempMax = curRow.max()
+            if (tempMax! > globalMax) {
+                globalMax = tempMax!
+                globalIndex = [curRow.index(of: tempMax!)!,row]
+            }
+            row += 1
+        }
+        
+        return (globalMax, globalIndex)
     }
     
     func isSolved() -> Bool {
@@ -172,6 +193,43 @@ class BasicLevel {
     func positionInBounds(position: Array<Int>) -> Bool {
         if (position[0] >= 0 && position[0] < blocksReal[0].count &&
             position[1] >= 0 && position[1] < blocksReal.count) {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    func getNumBlockBlocks() -> Int {
+        return self.numBlockBlocks
+    }
+    
+    func setNumBlockBlocks(number: Int) {
+        self.numBlockBlocks = number
+    }
+    
+    func getNumBlocks() -> Int {
+        return self.numBlocksX * self.numBlocksY
+    }
+    
+    func getRoutePositions() -> Array<Array<Int>> {
+        return routePositions
+    }
+    
+    func setRoutePositions(positions: Array<Array<Int>>) {
+        routePositions = positions
+    }
+    
+    func getRouteDirections() -> Array<String> {
+        return routeDirections
+    }
+    
+    func setRouteDirections(directions: Array<String>) {
+        routeDirections = directions
+    }
+    
+    func isPositionOnBoundary(position: Array<Int>) -> Bool {
+        if  (position[0] == 0 || position[0] == (numBlocksX-1)) ||
+            (position[1] == 0 || position[1] == (numBlocksY-1)) {
             return true
         } else {
             return false

@@ -132,9 +132,6 @@ class GameplayScene: SKScene {
                     blockBoxSprite.zPosition = 5
                     self.addChild(blockBoxSprite)
                     
-                    //print("Size: ", blockBoxSprite.size)
-                    //print("Position: ", blockBoxSprite.position)
-                    
                 } else if blockType == 8 { // Setup player box
                     setupPlayerBox(rowIndex: rowIndex, columnIndex: columnIndex)
                 } else if blockType == 9 { // Setup end block
@@ -145,7 +142,6 @@ class GameplayScene: SKScene {
             columnIndex = 0
             rowIndex += 1
         }
-    
         
     }
     

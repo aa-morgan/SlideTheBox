@@ -36,7 +36,7 @@ class BasicLevelSolver {
     }
     
     // Given a BasicLevel and a custom start position, return an array of directions to the end block
-    private func routeToEnd(level: BasicLevel, customStart: Array<Int>) -> (routePositions: Array<Array<Int>>, routeDirections: Array<String>) {
+    func routeToEnd(level: BasicLevel, customStart: Array<Int>) -> (routePositions: Array<Array<Int>>, routeDirections: Array<String>) {
         
         var routeDirections = Array<String>()
         var routePositions = Array<Array<Int>>()
@@ -145,8 +145,14 @@ class BasicLevelSolver {
         level.setSolvable(isSolvable: checkSolvable(level: level))
         if (level.isSolvable()) {
             level.setStuckable(isStuckable: checkStuckable(level: level))
+            
+            let (routePositions, routeDirections) = routeToEnd(level: level, customStart: level.getStartPosition())
+            level.setRoutePositions(positions: routePositions)
+            level.setRouteDirections(directions: routeDirections)
         } else {
             level.setStuckable(isStuckable: true)
+            level.setRoutePositions(positions: [])
+            level.setRouteDirections(directions: [])
         }
         level.setSolved(isSolved: true)
     }
@@ -154,18 +160,14 @@ class BasicLevelSolver {
     private func searchSpanAndMark(level: BasicLevel, currentExplorationStage: Int) -> Int {
         
         var numSpans = 0
-        
         var newPosition = Array<Int>()
         
         var row = 0
         var col = 0
         for curRow in level.getBlocksExploration() {
             for expStage in curRow {
-                
                 if expStage == currentExplorationStage {
-                    
-                    if Array<Int>([row, col]) != level.getEndPosition() {
-                        
+                    if [col, row] != level.getEndPosition() {
                         numSpans += 1
                         for direction in directions {
                             (newPosition, _, _) = level.calculateMove(position: [col, row], direction: direction)
@@ -196,16 +198,13 @@ class BasicLevelSolver {
     }
     
     func checkStuckable(level: BasicLevel) -> Bool {
-        
         let copyOfBlocksExploration = level.getBlocksExploration()
         
         var row = 0
         var col = 0
         for curRow in copyOfBlocksExploration {
             for expStage in curRow {
-                
                 if expStage >= 2 {
-                    
                     runExplorationAlgorithm(level: level, startPosition: [col, row])
                     if (checkSolvable(level: level) == false) {
                         level.setBlocksExploration(blocks: copyOfBlocksExploration)
@@ -219,24 +218,6 @@ class BasicLevelSolver {
         }
         level.setBlocksExploration(blocks: copyOfBlocksExploration)
         return false
-    }
-    
-    private func twoDimMax(array: Array<Array<Int>>) -> (value: Int, index: Array<Int>) {
-        
-        var globalMax = 0
-        var globalIndex = Array<Int>()
-        
-        var row = 0
-        for curRow in array {
-            let tempMax = curRow.max()
-            if (tempMax! > globalMax) {
-                globalMax = tempMax!
-                globalIndex = [curRow.index(of: tempMax!)!,row]
-            }
-            row += 1
-        }
-    
-        return (globalMax, globalIndex)
     }
     
     private func inverseDirection(direction: String) -> String {

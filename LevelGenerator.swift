@@ -75,7 +75,16 @@ class LevelGenerator {
         print("Levels unsolvable: ", genStats.getLevelsUnsolvable())
         print("Levels stuckable: ", genStats.getLevelsStuckable())
         print("Levels too difficult: ", genStats.getLevelsTooDifficult())
-        print("Min Moves: ", level.getMinMoves())
+        print("Level difficult properties,")
+        print("\t minMoves: ", difficulty.getMinMoves(level: level))
+        print("\t percentOfBlockBlocks: ", difficulty.getPercentOfBlockBlocks(level: level))
+        print("\t maxExplorationStage: ", difficulty.getMaxExplorationStage(level: level))
+        print("\t numberOfExplorablePositions: ", difficulty.getNumberOfExplorablePositions(level: level))
+        print("\t averageMoveDistance: ", difficulty.getAverageMoveDistance(level: level))
+        print("\t percentOfRouteOnBoundary: ", difficulty.getPercentOfRouteOnBoundary(level: level))
+        print("\t endBlockOnBoundary: ", difficulty.isEndBlockOnBoundary(level: level))
+        
+        //print(level.getBlocksExploration())
 
         return level
     }
