@@ -17,17 +17,16 @@ class GameplayScene: SKScene {
     var newLevelBtn = SKSpriteNode()
     var popupPanel = SKSpriteNode()
     
-    var playerBox = SKSpriteNode()
+    var playerBlock = SKSpriteNode()
     var endBlock = SKSpriteNode()
     
-    let levelType = "Basic"
-    var level = BasicLevel()
+    let levelType = "Number"
+    var basicLevel = BasicLevel()
+    var numberLevel = NumberLevel()
     var levelGenerator = LevelGenerator()
-    var levelSolver = BasicLevelSolver()
-    var difficulty = BasicDifficultyCriteria()
     
-    var numBlocksX = Int()
-    var numBlocksY = Int()
+    var numBlocksX = Int(16)
+    var numBlocksY = Int(8)
     var blockWidth = CGFloat()
     var blockHeight = CGFloat()
     let menuBarHeight = CGFloat(100)
@@ -97,8 +96,6 @@ class GameplayScene: SKScene {
         let playableWidth = self.size.width
         let playableHeight = self.size.height - menuBarHeight
         
-        numBlocksX = 12
-        numBlocksY = 6
         blockWidth = playableWidth / CGFloat(numBlocksX)
         blockHeight = playableHeight / CGFloat(numBlocksY)
         
@@ -110,10 +107,15 @@ class GameplayScene: SKScene {
     }
     
     func setupLevel() {
-        difficulty = BasicDifficultyCriteria(difficulty: "easy")
-        levelGenerator = LevelGenerator(levelType: levelType, numBlocksX: numBlocksX, numBlocksY: numBlocksY, difficulty: difficulty)
-        level = levelGenerator.generate()
+        levelGenerator = LevelGenerator(levelType: levelType, numBlocksX: numBlocksX, numBlocksY: numBlocksY)
+        let level = levelGenerator.generate()
         currentPosition = level.getStartPosition()
+        
+        if levelType == "Basic" {
+            basicLevel = (level as! BasicLevel)
+        } else if levelType == "Number" {
+            numberLevel = (level as! NumberLevel)
+        }
         
         isMoving = false
         levelPaused = false
@@ -123,20 +125,16 @@ class GameplayScene: SKScene {
         var columnIndex = 0
         for row in level.getBlocksReal() {
             for blockType in row {
-                if blockType == 1 { // Add block box
-                    let blockBoxSprite = SKSpriteNode(imageNamed: "Block Box")
-                    blockBoxSprite.size = CGSize(width: blockWidth, height: blockHeight)
-                    blockBoxSprite.anchorPoint = CGPoint(x: 0, y: 1)
-                    blockBoxSprite.name = "Block Box"
-                    blockBoxSprite.position = CGPoint(x: CGFloat(columnIndex) * blockWidth, y: -(CGFloat(rowIndex) * blockHeight))
-                    blockBoxSprite.zPosition = 5
-                    self.addChild(blockBoxSprite)
-                    
+                if blockType == 1 { // Add blocking block
+                    addBlockBlock(columnIndex: columnIndex, rowIndex: rowIndex)
                 } else if blockType == 8 { // Setup player box
-                    setupPlayerBox(rowIndex: rowIndex, columnIndex: columnIndex)
+                    setupPlayerBox(columnIndex: columnIndex, rowIndex: rowIndex)
                 } else if blockType == 9 { // Setup end block
-                    setupEndBlock(rowIndex: rowIndex, columnIndex: columnIndex)
+                    setupEndBlock(columnIndex: columnIndex, rowIndex: rowIndex)
+                } else if (blockType >= 10 && blockType <= 18) { // Setup number block
+                    addNumberBlock(columnIndex: columnIndex, rowIndex: rowIndex, blockType: blockType)
                 }
+                
                 columnIndex += 1
             }
             columnIndex = 0
@@ -145,18 +143,28 @@ class GameplayScene: SKScene {
         
     }
     
-    func setupPlayerBox(rowIndex: Int, columnIndex: Int) {
-        playerBox = SKSpriteNode(imageNamed: "Player Box")
-        playerBox.size = CGSize(width: blockWidth, height: blockHeight)
-        playerBox.anchorPoint = CGPoint(x: 0, y: 1)
-        playerBox.name = "Player Box"
-        playerBox.position = CGPoint(x: CGFloat(columnIndex) * blockWidth, y: -(CGFloat(rowIndex) * blockHeight))
-        playerBox.zPosition = 6
-        
-        self.addChild(playerBox)
+    func addBlockBlock(columnIndex: Int, rowIndex: Int) {
+        let blockBlockSprite = SKSpriteNode(imageNamed: "Block Box")
+        blockBlockSprite.size = CGSize(width: blockWidth, height: blockHeight)
+        blockBlockSprite.anchorPoint = CGPoint(x: 0, y: 1)
+        blockBlockSprite.name = "Block Block"
+        blockBlockSprite.position = CGPoint(x: CGFloat(columnIndex) * blockWidth, y: -(CGFloat(rowIndex) * blockHeight))
+        blockBlockSprite.zPosition = 5
+        self.addChild(blockBlockSprite)
     }
     
-    func setupEndBlock(rowIndex: Int, columnIndex: Int) {
+    func setupPlayerBox(columnIndex: Int, rowIndex: Int) {
+        playerBlock = SKSpriteNode(imageNamed: "Player Box")
+        playerBlock.size = CGSize(width: blockWidth, height: blockHeight)
+        playerBlock.anchorPoint = CGPoint(x: 0, y: 1)
+        playerBlock.name = "Player Block"
+        playerBlock.position = CGPoint(x: CGFloat(columnIndex) * blockWidth, y: -(CGFloat(rowIndex) * blockHeight))
+        playerBlock.zPosition = 6
+        
+        self.addChild(playerBlock)
+    }
+    
+    func setupEndBlock(columnIndex: Int, rowIndex: Int) {
         endBlock = SKSpriteNode(imageNamed: "End Block")
         endBlock.size = CGSize(width: blockWidth, height: blockHeight)
         endBlock.anchorPoint = CGPoint(x: 0, y: 1)
@@ -165,6 +173,16 @@ class GameplayScene: SKScene {
         endBlock.zPosition = 5
         
         self.addChild(endBlock)
+    }
+    
+    func addNumberBlock(columnIndex: Int, rowIndex: Int, blockType: Int) {
+        let numberBlockSprite = SKSpriteNode(imageNamed: "Hint")
+        numberBlockSprite.size = CGSize(width: blockWidth, height: blockHeight)
+        numberBlockSprite.anchorPoint = CGPoint(x: 0, y: 1)
+        numberBlockSprite.name = "Number Block"
+        numberBlockSprite.position = CGPoint(x: CGFloat(columnIndex) * blockWidth, y: -(CGFloat(rowIndex) * blockHeight))
+        numberBlockSprite.zPosition = 5
+        self.addChild(numberBlockSprite)
     }
     
     func setupGestures() {
@@ -185,7 +203,8 @@ class GameplayScene: SKScene {
     }
     
     func hintButtonPressed() {
-        let direction = levelSolver.solveForNextMove(level: level, customStart: currentPosition)
+        
+        let direction = levelGenerator.getSolver().solveForNextMove(level: getCurrentLevel(), customStart: currentPosition)
         if (direction != "none") {
             handleMove(direction: direction)
         }
@@ -206,11 +225,15 @@ class GameplayScene: SKScene {
     }
     
     func handleMove(direction: String) {
+        var positions = Array<Array<Int>>()
         var newPosition = Array<Int>()
+        var numMovesArray = Array<Int>()
         var numMoves = Int()
         
         if (!isMoving && !levelPaused && !levelComplete) {
-            (newPosition, numMoves, levelComplete) = level.calculateMove(position: currentPosition, direction: direction)
+            (positions, numMovesArray, levelComplete) = getCurrentLevel().calculateMove(position: currentPosition, direction: direction)
+            newPosition = positions[0]
+            numMoves = numMovesArray[0]
             
             currentPosition = newPosition
             moveBox(toPosition: currentPosition, numBlocks: numMoves)
@@ -230,7 +253,7 @@ class GameplayScene: SKScene {
         
         moveAnimation = SKAction.move(to: moveToPosition, duration: moveTime)
         
-        playerBox.run(moveAnimation, completion: moveComplete)
+        playerBlock.run(moveAnimation, completion: moveComplete)
     }
     
     func moveComplete() -> Void {
@@ -327,5 +350,17 @@ class GameplayScene: SKScene {
         popupPanel.addChild(quit)
         
         self.addChild(popupPanel)
+    }
+    
+    func getCurrentLevel() -> BaseLevel {
+        let level: BaseLevel
+        if levelType == "Basic" {
+            level = basicLevel
+        } else if levelType == "Number" {
+            level = numberLevel
+        } else {
+            level = basicLevel
+        }
+        return level
     }
 }

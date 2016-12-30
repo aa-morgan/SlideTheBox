@@ -8,7 +8,7 @@
 
 import Foundation
 
-class BasicDifficultyCriteria {
+class BasicDifficultyCriteria: BaseDifficultyCriteria {
     
     private var minMoves = Int()
     private var percentOfBlockBlocks = Float()
@@ -25,19 +25,21 @@ class BasicDifficultyCriteria {
         
         if difficulty == "easy" {
             self.minMoves = Int(5)
-            self.percentOfBlockBlocks = Float(0.5)
+            self.percentOfBlockBlocks = Float(0.25)
         } else if difficulty == "medium" {
-            
+            self.minMoves = Int(8)
+            self.percentOfBlockBlocks = Float(0.2)
         } else if difficulty == "hard" {
-            
+            self.minMoves = Int(12)
+            self.percentOfBlockBlocks = Float(0.2)
         }
         
     }
     
-    func met(level: BasicLevel) -> Bool {
+    func met(level: BaseLevel) -> Bool {
         
-        if (getMinMoves(level: level) > self.minMoves &&
-            getPercentOfBlockBlocks(level: level) < self.percentOfBlockBlocks) {
+        if (getMinMoves(level: level as! BasicLevel) >= self.minMoves &&
+            getPercentOfBlockBlocks(level: level as! BasicLevel) <= self.percentOfBlockBlocks) {
             return true
         } else {
             return false
@@ -45,30 +47,40 @@ class BasicDifficultyCriteria {
         
     }
     
-    func score(level: BasicLevel) -> Int {
+    func score(level: BaseLevel) -> Int {
         // Calculate difficulty score
+        
+        
         return 0
     }
     
-    func getMinMoves(level: BasicLevel) -> Int {
-        return level.getMinMoves()
+    func getMinMoves(level: BaseLevel) -> Int {
+        return (level as! BasicLevel).getMinMoves()
     }
     
-    func getPercentOfBlockBlocks(level: BasicLevel) -> Float {
-        return Float(level.getNumBlockBlocks()) / Float((level.getNumBlocks()))
+    func getMinMovesCriteria() -> Int {
+        return self.minMoves
     }
     
-    func getMaxExplorationStage(level: BasicLevel) -> Int {
-        let (value, _) = level.twoDimMax(array: level.getBlocksExploration())
+    func getPercentOfBlockBlocks(level: BaseLevel) -> Float {
+        return Float((level as! BasicLevel).getNumBlockBlocks()) / Float(((level as! BasicLevel).getNumBlocks()))
+    }
+    
+    func getPercentOfBlockBlocksCriteria() -> Float {
+        return self.percentOfBlockBlocks
+    }
+    
+    func getMaxExplorationStage(level: BaseLevel) -> Int {
+        let (value, _) = (level as! BasicLevel).twoDimMax(array: (level as! BasicLevel).getBlocksExploration())
         return value
     }
     
-    func getNumberOfExplorablePositions(level: BasicLevel) -> Int {
+    func getNumberOfExplorablePositions(level: BaseLevel) -> Int {
         var explorableCount = 0
         
         var row = 0
         var col = 0
-        for curRow in level.getBlocksExploration() {
+        for curRow in (level as! BasicLevel).getBlocksExploration() {
             for stage in curRow {
                 
                 if (stage > 0) {
@@ -84,8 +96,8 @@ class BasicDifficultyCriteria {
         return explorableCount
     }
     
-    func getAverageMoveDistance(level: BasicLevel) -> Float {
-        var routePositions = level.getRoutePositions()
+    func getAverageMoveDistance(level: BaseLevel) -> Float {
+        var routePositions = (level as! BasicLevel).getRoutePositions()
         let numMoves = routePositions.count - 1
         var distance = Int()
         var totalDistance = Int(0)
@@ -103,8 +115,8 @@ class BasicDifficultyCriteria {
         return averageMoveDistance
     }
     
-    func getPercentOfRouteOnBoundary(level: BasicLevel) -> Float {
-        var routePositions = level.getRoutePositions()
+    func getPercentOfRouteOnBoundary(level: BaseLevel) -> Float {
+        var routePositions = (level as! BasicLevel).getRoutePositions()
         var distance = Int()
         var totalDistanceOn = Int(0)
         var totalDistanceOff = Int(0)
@@ -113,8 +125,8 @@ class BasicDifficultyCriteria {
         
         for position in routePositions {
             distance = distanceBetween(from: lastPosition, to: position)
-            if (level.isPositionOnBoundary(position: lastPosition) &&
-                level.isPositionOnBoundary(position: position)) {
+            if ((level as! BasicLevel).isPositionOnBoundary(position: lastPosition) &&
+                (level as! BasicLevel).isPositionOnBoundary(position: position)) {
                 totalDistanceOn += distance
             } else {
                 totalDistanceOff += distance
@@ -127,10 +139,10 @@ class BasicDifficultyCriteria {
         return percentOfRouteOnBoundary
     }
     
-    func isEndBlockOnBoundary(level: BasicLevel) -> Bool {
-        let endPosition = level.getEndPosition()
+    func isEndBlockOnBoundary(level: BaseLevel) -> Bool {
+        let endPosition = (level as! BasicLevel).getEndPosition()
         
-        return level.isPositionOnBoundary(position: endPosition)
+        return (level as! BasicLevel).isPositionOnBoundary(position: endPosition)
     }
     
     func distanceBetween(from: Array<Int>, to: Array<Int>) -> Int {

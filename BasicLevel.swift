@@ -8,7 +8,7 @@
 
 import SpriteKit
 
-class BasicLevel {
+class BasicLevel: BaseLevel {
     
     var blocksReal = Array<Array<Int>>()
     var blocksExploration = Array<Array<Int>>()
@@ -16,15 +16,15 @@ class BasicLevel {
     var routePositions = Array<Array<Int>>()
     var routeDirections = Array<String>()
     
-    private var numBlocksX = Int()
-    private var numBlocksY = Int()
+    var numBlocksX = Int()
+    var numBlocksY = Int()
     
-    private var startPosition = Array<Int>()
-    private var endPosition = Array<Int>()
+    var startPosition = Array<Int>()
+    var endPosition = Array<Int>()
     
-    private var solved = Bool()
-    private var solvable = Bool()
-    private var stuckable = Bool()
+    var solved = Bool()
+    var solvable = Bool()
+    var stuckable = Bool()
     
     init() {
     }
@@ -39,7 +39,7 @@ class BasicLevel {
     }
     
     func calculateMove(position: Array<Int>, direction: String)
-        -> (newPosition: Array<Int>, numMoves: Int, endBlock: Bool) {
+    -> (positions: Array<Array<Int>>, numMoves: Array<Int>, endBlock: Bool) {
         
         var finished = false
         var col = position[0]
@@ -49,15 +49,7 @@ class BasicLevel {
         var endBlock = false
         
         while(!finished) {
-            if (direction == "up") {
-                row -= 1
-            } else if direction == "down" {
-                row += 1
-            } else if direction == "left" {
-                col -= 1
-            } else if direction == "right" {
-                col += 1
-            }
+            (col, row) = incrementPosition(col: col, row: row, direction: direction, amount: 1)
             
             if (row >= 0 && row < numBlocksY) && (col >= 0 && col < numBlocksX) {
                 if blocksReal[row][col] == 0 || blocksReal[row][col] == 8 { // Empty or start Block
@@ -75,17 +67,11 @@ class BasicLevel {
             
         }
         
-        if (direction == "up") {
-            newPosition[1] -= numMoves
-        } else if direction == "down" {
-            newPosition[1] += numMoves
-        } else if direction == "left" {
-            newPosition[0] -= numMoves
-        } else if direction == "right" {
-            newPosition[0] += numMoves
-        }
+        newPosition = incrementPosition(position: newPosition, direction: direction, amount: numMoves)
+        var positions = Array<Array<Int>>()
+        positions.append(newPosition)
         
-            return (newPosition: newPosition, numMoves: numMoves, endBlock: endBlock)
+        return (positions: positions, numMoves: [numMoves], endBlock: endBlock)
     }
     
     func twoDimMax(array: Array<Array<Int>>) -> (value: Int, index: Array<Int>) {
@@ -104,6 +90,45 @@ class BasicLevel {
         }
         
         return (globalMax, globalIndex)
+    }
+    
+    func positionInBounds(position: Array<Int>) -> Bool {
+        if (position[0] >= 0 && position[0] < blocksReal[0].count &&
+            position[1] >= 0 && position[1] < blocksReal.count) {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    func isPositionOnBoundary(position: Array<Int>) -> Bool {
+        if  (position[0] == 0 || position[0] == (numBlocksX-1)) ||
+            (position[1] == 0 || position[1] == (numBlocksY-1)) {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    func incrementPosition(col: Int, row: Int, direction: String, amount: Int) -> (col: Int, row: Int) {
+        let startPosition = [col, row]
+        let newPosition = incrementPosition(position: startPosition, direction: direction, amount: amount)
+        return (col: newPosition[0], row: newPosition[1])
+    }
+    
+    func incrementPosition(position: Array<Int>, direction: String, amount: Int) -> Array<Int> {
+        var newPosition = position
+        if direction == "up" {
+            newPosition[1] -= amount
+        } else if direction == "down" {
+            newPosition[1] += amount
+        } else if direction == "left" {
+            newPosition[0] -= amount
+        } else if direction == "right" {
+            newPosition[0] += amount
+        }
+        
+        return newPosition
     }
     
     func isSolved() -> Bool {
@@ -190,15 +215,6 @@ class BasicLevel {
         }
     }
     
-    func positionInBounds(position: Array<Int>) -> Bool {
-        if (position[0] >= 0 && position[0] < blocksReal[0].count &&
-            position[1] >= 0 && position[1] < blocksReal.count) {
-            return true
-        } else {
-            return false
-        }
-    }
-    
     func getNumBlockBlocks() -> Int {
         return self.numBlockBlocks
     }
@@ -225,15 +241,6 @@ class BasicLevel {
     
     func setRouteDirections(directions: Array<String>) {
         routeDirections = directions
-    }
-    
-    func isPositionOnBoundary(position: Array<Int>) -> Bool {
-        if  (position[0] == 0 || position[0] == (numBlocksX-1)) ||
-            (position[1] == 0 || position[1] == (numBlocksY-1)) {
-            return true
-        } else {
-            return false
-        }
     }
     
 }

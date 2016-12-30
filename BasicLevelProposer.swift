@@ -8,12 +8,12 @@
 
 import Foundation
 
-class BasicLevelProposer {
+class BasicLevelProposer: BaseLevelProposer {
     
-    private var numBlocksX = Int()
-    private var numBlocksY = Int()
+    var numBlocksX = Int()
+    var numBlocksY = Int()
     
-    private var blocksReal = Array<Array<Int>>()
+    var blocksReal = Array<Array<Int>>()
     
     init() {
     }
@@ -23,10 +23,11 @@ class BasicLevelProposer {
         self.numBlocksY = numBlocksY
     }
     
-    func propose(numBlocks: Int) -> BasicLevel {
+    func propose(difficulty: BaseDifficultyCriteria) -> BaseLevel {
         
         let level = BasicLevel(numBlocksX: numBlocksX, numBlocksY: numBlocksY)
-    
+        let numBlocks = generateNumBlockBlocks(difficulty: (difficulty as! BasicDifficultyCriteria))
+        
         var startPosition = Array<Int>()
         var endPosition = Array<Int>()
         (blocksReal, startPosition, endPosition) = proposeBlocksReal(numBlocks: numBlocks)
@@ -39,7 +40,7 @@ class BasicLevelProposer {
         return level
     }
     
-    private func proposeBlocksReal(numBlocks: Int) -> (blocksReal: Array<Array<Int>>,
+    func proposeBlocksReal(numBlocks: Int) -> (blocksReal: Array<Array<Int>>,
         startPosition: Array<Int>, endPosition: Array<Int>) {
         
         var blocksReal: Array<Array<Int>> = Array(repeating: Array(repeating: 0, count: numBlocksX), count: numBlocksY)
@@ -81,6 +82,23 @@ class BasicLevelProposer {
         }
             
         return (blocksReal: blocksReal, startPosition: startPosition, endPosition: endPosition)
+    }
+    
+    func generateNumBlockBlocks(difficulty: BasicDifficultyCriteria) -> Int {
+        //            let levelNumBlocks = (numBlocksX*numBlocksY)/8
+        
+        let levelMaxBlocks = difficulty.getPercentOfBlockBlocksCriteria() * Float(numBlocksX * numBlocksY)
+        let levelNumBlockBlocks = Int(arc4random_uniform(UInt32(levelMaxBlocks)-3)+3)
+        
+        //            var levelNumBlocks = Int()
+        //            var percentOfBlockBlocks = Float()
+        //            repeat {
+        //                levelNumBlocks = randomGaussian(mean:   Float(numBlocksX*numBlocksY)/6,
+        //                                                stddev: Float(numBlocksX*numBlocksY)/8)
+        //                percentOfBlockBlocks = Float(levelNumBlocks) / Float(numBlocksX * numBlocksY)
+        //            } while (percentOfBlockBlocks <= difficulty.getPercentOfBlockBlocksCriteria())
+        
+        return levelNumBlockBlocks
     }
     
 }

@@ -8,25 +8,22 @@
 
 import Foundation
 
-class BasicLevelSolver {
+class BasicLevelSolver: BaseLevelSolver {
     
     let directions = ["left", "right", "up", "down"]
     
-    init() {
-    }
-    
     // Given a BasicLevel, run the main exploration algorithm and set the results
-    func solve(level: BasicLevel) {
-        runExplorationAlgorithm(level: level, startPosition: level.getStartPosition())
-        setLevelProperties(level: level)
+    func solve(level: BaseLevel) {
+        runExplorationAlgorithm(level: (level as! BasicLevel), startPosition: level.getStartPosition())
+        setLevelProperties(level: (level as! BasicLevel))
     }
     
     // Given a BasicLevel and a custom start position, return the next move
-    func solveForNextMove(level: BasicLevel, customStart: Array<Int>) -> String {
+    func solveForNextMove(level: BaseLevel, customStart: Array<Int>) -> String {
         var nextMove = String()
         
         if !(level.getEndPosition() == customStart) {
-            let (_, routeDirections) = routeToEnd(level: level, customStart: customStart)
+            let (_, routeDirections) = routeToEnd(level: (level as! BasicLevel), customStart: customStart)
             nextMove = routeDirections[0]
         } else {
             nextMove = "none"
@@ -36,13 +33,13 @@ class BasicLevelSolver {
     }
     
     // Given a BasicLevel and a custom start position, return an array of directions to the end block
-    func routeToEnd(level: BasicLevel, customStart: Array<Int>) -> (routePositions: Array<Array<Int>>, routeDirections: Array<String>) {
+    func routeToEnd(level: BaseLevel, customStart: Array<Int>) -> (routePositions: Array<Array<Int>>, routeDirections: Array<String>) {
         
         var routeDirections = Array<String>()
         var routePositions = Array<Array<Int>>()
-        let customBlocksExploration = customSolve(level: level, customStart: customStart)
+        let customBlocksExploration = customSolve(level: (level as! BasicLevel), customStart: customStart)
         
-        var headPosition = level.getEndPosition()
+        var headPosition = (level as! BasicLevel).getEndPosition()
         var headExploreStage = customBlocksExploration[headPosition[1]][headPosition[0]]
         var found = Bool()
         var direction = String()
@@ -51,7 +48,7 @@ class BasicLevelSolver {
         
         repeat {
             headExploreStage -= 1
-            (found, headPosition, direction) = spanAndSearch(level: level, customBlocksExploration: customBlocksExploration, spanPosition: headPosition, searchFor: headExploreStage)
+            (found, headPosition, direction) = spanAndSearch(level: (level as! BasicLevel), customBlocksExploration: customBlocksExploration, spanPosition: headPosition, searchFor: headExploreStage)
             if !found {
                 print("Error: Could not find exploration stage!")
                 break
@@ -160,6 +157,7 @@ class BasicLevelSolver {
     private func searchSpanAndMark(level: BasicLevel, currentExplorationStage: Int) -> Int {
         
         var numSpans = 0
+        var positions = Array<Array<Int>>()
         var newPosition = Array<Int>()
         
         var row = 0
@@ -170,7 +168,8 @@ class BasicLevelSolver {
                     if [col, row] != level.getEndPosition() {
                         numSpans += 1
                         for direction in directions {
-                            (newPosition, _, _) = level.calculateMove(position: [col, row], direction: direction)
+                            (positions, _, _) = level.calculateMove(position: [col, row], direction: direction)
+                            newPosition = positions[0]
                             if level.getBlocksExplorationValue(position: newPosition) == 0 {
                                 level.setBlocksExplorationValue(position: newPosition,
                                                                 value: currentExplorationStage + 1)
