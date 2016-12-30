@@ -57,10 +57,10 @@ class MainMenuScene: SKScene {
     func getLabel() {
         title = self.childNode(withName: "Title Label") as! SKLabelNode
         
-        title.fontName = "RosewoodStd-Regular"
+        title.fontName = "Helvetica"
         title.fontSize = 120
+        title.fontColor = UIColor(red: 153/255, green: 153/255, blue: 153/255, alpha: 1)
         title.text = "Slide the Box"
-        
         title.zPosition = 5
         
         let moveUp = SKAction.moveTo(y: title.position.y + 30, duration: TimeInterval(1.3))
@@ -74,8 +74,9 @@ class MainMenuScene: SKScene {
     func showScore() {
         score.removeFromParent()
         
-        score = SKLabelNode(fontNamed: "RosewoodStd-Regular")
+        score = SKLabelNode(fontNamed: "Helvetica")
         score.fontSize = 120
+        score.fontColor = UIColor(red: 153/255, green: 153/255, blue: 153/255, alpha: 1)
         score.text = "\(UserDefaults.standard.integer(forKey: "Highscore"))"
         score.position = CGPoint(x: 0, y: -300)
         score.zPosition = 6

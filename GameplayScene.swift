@@ -30,6 +30,7 @@ class GameplayScene: SKScene {
     var blockWidth = CGFloat()
     var blockHeight = CGFloat()
     let menuBarHeight = CGFloat(100)
+    let blockGap = CGFloat(4)
     
     var currentPosition = Array<Int>()
     
@@ -144,7 +145,7 @@ class GameplayScene: SKScene {
     }
     
     func addBlockBlock(columnIndex: Int, rowIndex: Int) {
-        let blockBlockSprite = SKSpriteNode(imageNamed: "Block Box")
+        let blockBlockSprite = SKSpriteNode(imageNamed: "Block Block")
         blockBlockSprite.size = CGSize(width: blockWidth, height: blockHeight)
         blockBlockSprite.anchorPoint = CGPoint(x: 0, y: 1)
         blockBlockSprite.name = "Block Block"
@@ -154,7 +155,7 @@ class GameplayScene: SKScene {
     }
     
     func setupPlayerBox(columnIndex: Int, rowIndex: Int) {
-        playerBlock = SKSpriteNode(imageNamed: "Player Box")
+        playerBlock = SKSpriteNode(imageNamed: "Player Block")
         playerBlock.size = CGSize(width: blockWidth, height: blockHeight)
         playerBlock.anchorPoint = CGPoint(x: 0, y: 1)
         playerBlock.name = "Player Block"
@@ -176,7 +177,9 @@ class GameplayScene: SKScene {
     }
     
     func addNumberBlock(columnIndex: Int, rowIndex: Int, blockType: Int) {
-        let numberBlockSprite = SKSpriteNode(imageNamed: "Hint")
+        let numberBlockSprite: SKSpriteNode
+        let imageName = "Number " + String(blockType-10) + " Block"
+        numberBlockSprite = SKSpriteNode(imageNamed: imageName)
         numberBlockSprite.size = CGSize(width: blockWidth, height: blockHeight)
         numberBlockSprite.anchorPoint = CGPoint(x: 0, y: 1)
         numberBlockSprite.name = "Number Block"
@@ -268,21 +271,22 @@ class GameplayScene: SKScene {
         levelPaused = true
         self.scene?.isPaused = true
         
-        popupPanel = SKSpriteNode(imageNamed: "Popup Panel")
+        popupPanel = SKSpriteNode(imageNamed: "Panel")
         popupPanel.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         popupPanel.position = CGPoint(x: self.size.width/2, y: -self.size.height/2)
         popupPanel.size = CGSize(width: 800, height: 500)
         popupPanel.zPosition = 11
         
         let label = SKLabelNode()
-        let resume = SKSpriteNode(imageNamed: "Play")
-        let new = SKSpriteNode(imageNamed: "New")
-        let quit = SKSpriteNode(imageNamed: "Home")
+        let resume = SKSpriteNode(imageNamed: "Play Button")
+        let new = SKSpriteNode(imageNamed: "New Button")
+        let quit = SKSpriteNode(imageNamed: "Home Button")
     
         label.name = "Pause Label"
-        label.fontName = "Chalkboard"
+        label.fontName = "Helvetica"
         label.fontSize = 96
         label.text = "Paused"
+        label.fontColor = UIColor(red: 153/255, green: 153/255, blue: 153/255, alpha: 1)
         label.position = CGPoint(x: 0, y: 120)
         label.zPosition = 11
         
@@ -316,20 +320,21 @@ class GameplayScene: SKScene {
         levelComplete = true
         self.scene?.isPaused = true
         
-        popupPanel = SKSpriteNode(imageNamed: "Popup Panel")
+        popupPanel = SKSpriteNode(imageNamed: "Panel")
         popupPanel.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         popupPanel.position = CGPoint(x: self.size.width/2, y: -self.size.height/2)
         popupPanel.size = CGSize(width: 800, height: 500)
         popupPanel.zPosition = 11
         
         let label = SKLabelNode()
-        let new = SKSpriteNode(imageNamed: "New")
-        let quit = SKSpriteNode(imageNamed: "Home")
+        let new = SKSpriteNode(imageNamed: "New Button")
+        let quit = SKSpriteNode(imageNamed: "Home Button")
         
         label.name = "Level Complete Label"
-        label.fontName = "Chalkboard"
+        label.fontName = "Helvetica"
         label.fontSize = 96
         label.text = "Level Complete"
+        label.fontColor = UIColor(red: 153/255, green: 153/255, blue: 153/255, alpha: 1)
         label.position = CGPoint(x: 0, y: 120)
         label.zPosition = 11
         

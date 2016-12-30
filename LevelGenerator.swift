@@ -19,7 +19,7 @@ class LevelGenerator {
     var numBlocksX = Int()
     var numBlocksY = Int()
     
-    let testingStage = "Propose"
+    let testingStage = "propose"
     
     // Temp init before the class is properly init
     init(){
@@ -63,11 +63,10 @@ class LevelGenerator {
         var levelSolvable = Bool()
         var levelStuckable = Bool()
         
-        repeat {
-            
-            level = levelProposer.propose(difficulty: difficulty)
-            
-            if testingStage != "propose" {
+        if testingStage == "all" {
+            repeat {
+                
+                level = levelProposer.propose(difficulty: difficulty)
                 levelSolver.solve(level: level)
                 
                 levelSolvable = level.isSolvable()
@@ -81,24 +80,29 @@ class LevelGenerator {
                 } else if (difficulty.met(level: level) == false) {
                     genStats.incrementLevelsTooDifficult()
                 }
-            }
+                
+                
+            } while !(  levelSolvable == true &&
+                        levelStuckable == false &&
+                        difficulty.met(level: level) == true)
             
-        } while !(  levelSolvable == true &&
-                    levelStuckable == false &&
-                    difficulty.met(level: level) == true)
-        
-        print("Levels proposed: ", genStats.getLevelsProposed())
-        print("Levels unsolvable: ", genStats.getLevelsUnsolvable())
-        print("Levels stuckable: ", genStats.getLevelsStuckable())
-        print("Levels too difficult: ", genStats.getLevelsTooDifficult())
-        print("Level difficulty properties,")
-        print("\t minMoves: ", difficulty.getMinMoves(level: level))
-        print("\t percentOfBlockBlocks: ", difficulty.getPercentOfBlockBlocks(level: level))
-        print("\t maxExplorationStage: ", difficulty.getMaxExplorationStage(level: level))
-        print("\t numberOfExplorablePositions: ", difficulty.getNumberOfExplorablePositions(level: level))
-        print("\t averageMoveDistance: ", difficulty.getAverageMoveDistance(level: level))
-        print("\t percentOfRouteOnBoundary: ", difficulty.getPercentOfRouteOnBoundary(level: level))
-        print("\t endBlockOnBoundary: ", difficulty.isEndBlockOnBoundary(level: level))
+            print("Levels proposed: ", genStats.getLevelsProposed())
+            print("Levels unsolvable: ", genStats.getLevelsUnsolvable())
+            print("Levels stuckable: ", genStats.getLevelsStuckable())
+            print("Levels too difficult: ", genStats.getLevelsTooDifficult())
+            print("Level difficulty properties,")
+            print("\t minMoves: ", difficulty.getMinMoves(level: level))
+            print("\t percentOfBlockBlocks: ", difficulty.getPercentOfBlockBlocks(level: level))
+            print("\t maxExplorationStage: ", difficulty.getMaxExplorationStage(level: level))
+            print("\t numberOfExplorablePositions: ", difficulty.getNumberOfExplorablePositions(level: level))
+            print("\t averageMoveDistance: ", difficulty.getAverageMoveDistance(level: level))
+            print("\t percentOfRouteOnBoundary: ", difficulty.getPercentOfRouteOnBoundary(level: level))
+            print("\t endBlockOnBoundary: ", difficulty.isEndBlockOnBoundary(level: level))
+        } else if testingStage == "propose" {
+            level = levelProposer.propose(difficulty: difficulty)
+        } else {
+            level = BasicLevel()
+        }
 
         return level
     }

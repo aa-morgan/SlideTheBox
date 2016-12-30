@@ -34,7 +34,6 @@
 		F3F929D71DF7863D0000FFB1 /* BasicLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F929D61DF7863D0000FFB1 /* BasicLevel.swift */; };
 		F3F929DA1DF7866C0000FFB1 /* MainMenuScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = F3F929D91DF7866C0000FFB1 /* MainMenuScene.sks */; };
 		F3F929DC1DF7867A0000FFB1 /* GameplayScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = F3F929DB1DF7867A0000FFB1 /* GameplayScene.sks */; };
-		F3F929E01DF790780000FFB1 /* RosewoodStd-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = F3F929DF1DF790780000FFB1 /* RosewoodStd-Regular.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -88,7 +87,6 @@
 		F3F929D61DF7863D0000FFB1 /* BasicLevel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicLevel.swift; sourceTree = "<group>"; };
 		F3F929D91DF7866C0000FFB1 /* MainMenuScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MainMenuScene.sks; sourceTree = "<group>"; };
 		F3F929DB1DF7867A0000FFB1 /* GameplayScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameplayScene.sks; sourceTree = "<group>"; };
-		F3F929DF1DF790780000FFB1 /* RosewoodStd-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "RosewoodStd-Regular.otf"; path = "Assests/Fonts/RosewoodStd-Regular.otf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -246,7 +244,6 @@
 		F3F929B51DF785AA0000FFB1 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
-				F3F929DF1DF790780000FFB1 /* RosewoodStd-Regular.otf */,
 			);
 			name = Fonts;
 			sourceTree = "<group>";
@@ -380,7 +377,6 @@
 			files = (
 				F3B4DF711DF4899700BA4725 /* Main.storyboard in Resources */,
 				F3F929DA1DF7866C0000FFB1 /* MainMenuScene.sks in Resources */,
-				F3F929E01DF790780000FFB1 /* RosewoodStd-Regular.otf in Resources */,
 				F3B4DF731DF4899700BA4725 /* Assets.xcassets in Resources */,
 				F3B4DF761DF4899700BA4725 /* LaunchScreen.storyboard in Resources */,
 				F3F929DC1DF7867A0000FFB1 /* GameplayScene.sks in Resources */,
