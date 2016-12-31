@@ -42,7 +42,7 @@ class Level {
     }
     
     func calculateMove(position: Array<Int>, direction: String)
-        -> (positions: Array<Array<Int>>, numMoves: Array<Int>, endBlock: Bool) {
+        -> (positions: Array<Array<Int>>, numMoves: Array<Int>, endBlock: Bool, abort: Bool) {
             
             var finished = false
             var col = position[0]
@@ -52,52 +52,84 @@ class Level {
             var positions = Array<Array<Int>>()
             var newPosition = position
             positions.append(newPosition)
+            var numMovesArray = Array<Int>()
             
             var hitNumber = false
             var numberRemaining = 0
+            
+            var currentDirection = direction
+            var updateDirection = String()
+            var hitArrow = false
+            var hitArrowNum = 0
+            var abort = false
             
             if (blocksReal[row][col] >= 11 && blocksReal[row][col] <= 18) { // Number block. No Number 0 block
                 hitNumber = true
                 numberRemaining = blocksReal[row][col] - 10
             }
             
-            while(!finished) {
-                
-                if hitNumber == true {
-                    if numberRemaining > 0 {
-                        numberRemaining -= 1
+            repeat {
+                numMoves = 0
+                hitArrow = false
+                finished = false
+                while(!finished) {
+                    
+                    if hitNumber == true {
+                        if numberRemaining > 0 {
+                            numberRemaining -= 1
+                        } else {
+                            finished = true
+                            break
+                        }
+                    }
+                    
+                    (col, row) = incrementPosition(col: col, row: row, direction: currentDirection, amount: 1)
+                    
+                    if (row >= 0 && row < numBlocksY) && (col >= 0 && col < numBlocksX) {
+                        if blocksReal[row][col] == 0 || blocksReal[row][col] == 8 { // Empty or start Block
+                            numMoves += 1
+                        } else if blocksReal[row][col] == 9 { // End Block
+                            numMoves += 1
+                            finished = true
+                            endBlock = true
+                        } else if (blocksReal[row][col] >= 10 && blocksReal[row][col] <= 18) { // Number block
+                            hitNumber = true
+                            numberRemaining = blocksReal[row][col] - 10
+                            numMoves += 1
+                        } else if (blocksReal[row][col] >= 20 && blocksReal[row][col] <= 23) { // Arrow block
+                            hitArrow = true
+                            hitArrowNum += 1
+                            updateDirection = getArrowDirection(blockType: blocksReal[row][col])
+                            numMoves += 1
+                            finished = true
+                        } else if blocksReal[row][col] == 1 { // End block
+                            finished = true
+                        } else {
+                            finished = true
+                        }
                     } else {
                         finished = true
-                        break
                     }
+                    
                 }
                 
-                (col, row) = incrementPosition(col: col, row: row, direction: direction, amount: 1)
+                newPosition = incrementPosition(position: newPosition, direction: currentDirection, amount: numMoves)
+                positions.append(newPosition)
+                numMovesArray.append(numMoves)
                 
-                if (row >= 0 && row < numBlocksY) && (col >= 0 && col < numBlocksX) {
-                    if blocksReal[row][col] == 0 || blocksReal[row][col] == 8 { // Empty or start Block
-                        numMoves += 1
-                    } else if blocksReal[row][col] == 9 { // End Block
-                        numMoves += 1
-                        finished = true
-                        endBlock = true
-                    } else if (blocksReal[row][col] >= 10 && blocksReal[row][col] <= 18) { // Number block
-                        hitNumber = true
-                        numberRemaining = blocksReal[row][col] - 10
-                        numMoves += 1
-                    } else {
-                        finished = true
-                    }
-                } else {
-                    finished = true
+                if hitArrow {
+                    currentDirection = updateDirection
                 }
                 
-            }
+                if hitArrowNum > 10 {
+                    print("Error (in Level.calculateMove): An arrow has been hit more than 10 times within a single move. Infinity loop!")
+                    abort = true
+                    break
+                }
+                
+            } while(hitArrow)
             
-            newPosition = incrementPosition(position: newPosition, direction: direction, amount: numMoves)
-            positions.append(newPosition)
-            
-            return (positions: positions, numMoves: [numMoves], endBlock: endBlock)
+            return (positions: positions, numMoves: numMovesArray, endBlock: endBlock, abort: abort)
     }
     
     func twoDimMax(array: Array<Array<Int>>) -> (value: Int, index: Array<Int>) {
@@ -275,6 +307,31 @@ class Level {
     
     func setNumNumberBlocks(number: Int) {
         self.numNumberBlocks = number
+    }
+    
+    func getNumArrowBlocks() -> Int {
+        return self.numArrowBlocks
+    }
+    
+    func setNumArrowBlocks(number: Int) {
+        self.numArrowBlocks = number
+    }
+    
+    func getArrowDirection(blockType: Int) -> String {
+        
+        var arrowDirection = ""
+        
+        if blockType == 20 {
+            arrowDirection = "up"
+        } else if blockType == 21 {
+            arrowDirection = "down"
+        } else if blockType == 22 {
+            arrowDirection = "left"
+        } else if blockType == 23 {
+            arrowDirection = "right"
+        }
+        
+        return arrowDirection
     }
     
 }

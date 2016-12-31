@@ -91,6 +91,7 @@ class LevelSolver {
         var numSpans = 0
         var positions = Array<Array<Int>>()
         var newPosition = Array<Int>()
+        var abort = false
         
         var row = 0
         var col = 0
@@ -100,7 +101,7 @@ class LevelSolver {
                     if [col, row] != level.getEndPosition() {
                         numSpans += 1
                         for direction in directions {
-                            (positions, _, _) = level.calculateMove(position: [col, row], direction: direction)
+                            (positions, _, _, abort) = level.calculateMove(position: [col, row], direction: direction)
                             newPosition = positions.last!
                             if level.getBlocksExplorationValue(position: newPosition) == 0 {
                                 level.setBlocksExplorationValue(position: newPosition,

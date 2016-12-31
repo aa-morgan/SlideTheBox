@@ -40,7 +40,7 @@ class LevelGenerator {
         self.useArrows = useArrows
         
         self.level = Level()
-        self.levelProposer = LevelProposer(numBlocksX: numBlocksX, numBlocksY: numBlocksY, useNumbers: useNumbers, useArrows: useArrows)
+        self.levelProposer = LevelProposer(numBlocksX: numBlocksX, numBlocksY: numBlocksY)
         self.levelSolver = LevelSolver()
         self.difficulty = DifficultyCriteria(difficulty: "easy")
         self.genStats = LevelGeneratorStatistics()
@@ -54,7 +54,7 @@ class LevelGenerator {
         if testingStage == "all" {
             repeat {
                 
-                level = levelProposer.propose(difficulty: difficulty)
+                level = levelProposer.propose(difficulty: difficulty, useNumbers: useNumbers, useArrows: useArrows)
                 levelSolver.solve(level: level)
                 
                 levelSolvable = level.isSolvable()
@@ -87,7 +87,7 @@ class LevelGenerator {
             print("\t percentOfRouteOnBoundary: ", difficulty.getPercentOfRouteOnBoundary(level: level))
             print("\t endBlockOnBoundary: ", difficulty.isEndBlockOnBoundary(level: level))
         } else if testingStage == "propose" {
-            level = levelProposer.propose(difficulty: difficulty)
+            level = levelProposer.propose(difficulty: difficulty, useNumbers: useNumbers, useArrows: useArrows)
         } else {
             level = Level()
         }

@@ -128,6 +128,8 @@ class GameplayScene: SKScene {
                     setupEndBlock(columnIndex: columnIndex, rowIndex: rowIndex)
                 } else if (blockType >= 10 && blockType <= 18) { // Setup number block
                     addNumberBlock(columnIndex: columnIndex, rowIndex: rowIndex, blockType: blockType)
+                } else if (blockType >= 20 && blockType <= 23) { // Setup arrow block
+                    addArrowBlock(columnIndex: columnIndex, rowIndex: rowIndex, blockType: blockType)
                 }
                 
                 columnIndex += 1
@@ -136,16 +138,6 @@ class GameplayScene: SKScene {
             rowIndex += 1
         }
         
-    }
-    
-    func addBlockBlock(columnIndex: Int, rowIndex: Int) {
-        let blockBlockSprite = SKSpriteNode(imageNamed: "Block Block")
-        blockBlockSprite.size = CGSize(width: blockWidth, height: blockHeight)
-        blockBlockSprite.anchorPoint = CGPoint(x: 0, y: 1)
-        blockBlockSprite.name = "Block Block"
-        blockBlockSprite.position = CGPoint(x: CGFloat(columnIndex) * blockWidth, y: -(CGFloat(rowIndex) * blockHeight))
-        blockBlockSprite.zPosition = 5
-        self.addChild(blockBlockSprite)
     }
     
     func setupPlayerBox(columnIndex: Int, rowIndex: Int) {
@@ -170,6 +162,16 @@ class GameplayScene: SKScene {
         self.addChild(endBlock)
     }
     
+    func addBlockBlock(columnIndex: Int, rowIndex: Int) {
+        let blockBlockSprite = SKSpriteNode(imageNamed: "Block Block")
+        blockBlockSprite.size = CGSize(width: blockWidth, height: blockHeight)
+        blockBlockSprite.anchorPoint = CGPoint(x: 0, y: 1)
+        blockBlockSprite.name = "Block Block"
+        blockBlockSprite.position = CGPoint(x: CGFloat(columnIndex) * blockWidth, y: -(CGFloat(rowIndex) * blockHeight))
+        blockBlockSprite.zPosition = 5
+        self.addChild(blockBlockSprite)
+    }
+    
     func addNumberBlock(columnIndex: Int, rowIndex: Int, blockType: Int) {
         let numberBlockSprite: SKSpriteNode
         let imageName = "Number " + String(blockType-10) + " Block"
@@ -180,6 +182,30 @@ class GameplayScene: SKScene {
         numberBlockSprite.position = CGPoint(x: CGFloat(columnIndex) * blockWidth, y: -(CGFloat(rowIndex) * blockHeight))
         numberBlockSprite.zPosition = 5
         self.addChild(numberBlockSprite)
+    }
+
+    func addArrowBlock(columnIndex: Int, rowIndex: Int, blockType: Int) {
+        let arrowBlockSprite: SKSpriteNode
+        var arrowType = ""
+        
+        if blockType == 20 {
+            arrowType = "Up"
+        } else if blockType == 21 {
+            arrowType = "Down"
+        } else if blockType == 22 {
+            arrowType = "Left"
+        } else if blockType == 23 {
+            arrowType = "Right"
+        }
+        
+        let imageName = "Arrow " + arrowType
+        arrowBlockSprite = SKSpriteNode(imageNamed: imageName)
+        arrowBlockSprite.size = CGSize(width: blockWidth, height: blockHeight)
+        arrowBlockSprite.anchorPoint = CGPoint(x: 0, y: 1)
+        arrowBlockSprite.name = "Arrow Block"
+        arrowBlockSprite.position = CGPoint(x: CGFloat(columnIndex) * blockWidth, y: -(CGFloat(rowIndex) * blockHeight))
+        arrowBlockSprite.zPosition = 5
+        self.addChild(arrowBlockSprite)
     }
     
     func setupGestures() {
@@ -227,31 +253,41 @@ class GameplayScene: SKScene {
             var positions = Array<Array<Int>>()
             var newPosition = Array<Int>()
             var numMovesArray = Array<Int>()
-            var numMoves = Int()
+            // var numMoves = Int()
             
-            (positions, numMovesArray, levelComplete) = level.calculateMove(position: currentPosition, direction: direction)
+            (positions, numMovesArray, levelComplete, _) = level.calculateMove(position: currentPosition, direction: direction)
             newPosition = positions.last!
-            numMoves = numMovesArray[0]
+            //numMoves = numMovesArray[0]
             
             currentPosition = newPosition
-            moveBox(toPosition: currentPosition, numBlocks: numMoves)
+            moveBox(toPositions: positions, numBlocks: numMovesArray)
         }
     }
     
-    func moveBox(toPosition: Array<Int>, numBlocks: Int) {
-    
-        let moveTime = TimeInterval(perBlockTime * abs(CGFloat(numBlocks)))
-        var moveToPosition = CGPoint()
-        var moveAnimation = SKAction();
+    func moveBox(toPositions: Array<Array<Int>>, numBlocks: Array<Int>) {
         
         isMoving = true
         
-        moveToPosition = CGPoint(x:  CGFloat(toPosition[0])*blockWidth,
-                                 y: -CGFloat(toPosition[1])*blockHeight)
+        var moveTime = TimeInterval()
+        var moveToPosition = CGPoint()
+        var moveAnimations = Array<SKAction>()
         
-        moveAnimation = SKAction.move(to: moveToPosition, duration: moveTime)
+        var index = -1
+        for position in toPositions {
+            
+            if index >= 0 { // Ignore first position
+                moveTime = TimeInterval(perBlockTime * abs(CGFloat(numBlocks[index])))
+                
+                moveToPosition = CGPoint(x:  CGFloat(position[0])*blockWidth,
+                                         y: -CGFloat(position[1])*blockHeight)
+                
+                moveAnimations.append(SKAction.move(to: moveToPosition, duration: moveTime))
+            }
+            index += 1
+        }
         
-        playerBlock.run(moveAnimation, completion: moveComplete)
+        playerBlock.run(SKAction.sequence(moveAnimations), completion: moveComplete)
+
     }
     
     func moveComplete() -> Void {
