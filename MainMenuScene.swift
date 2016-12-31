@@ -15,6 +15,11 @@ class MainMenuScene: SKScene {
     var title = SKLabelNode()
     var score = SKLabelNode()
     
+    var numbersSelector = SKSpriteNode()
+    var arrowsSelector = SKSpriteNode()
+    let numbersKey = "Use Numbers"
+    let arrowsKey = "Use Arrows"
+    
     override func didMove(to view: SKView) {
         initialise();
     }
@@ -40,6 +45,30 @@ class MainMenuScene: SKScene {
                 showScore()
             }
             
+            if atPoint(location) == numbersSelector {
+                UserDefaults.standard.set(!UserDefaults.standard.bool(forKey: numbersKey), forKey: numbersKey)
+                
+                if UserDefaults.standard.bool(forKey: numbersKey) == true {
+                    numbersSelector.texture = SKTexture(imageNamed: "Select On")
+
+                } else {
+                    numbersSelector.texture = SKTexture(imageNamed: "Select Off")
+
+                }
+            }
+            
+            if atPoint(location) == arrowsSelector {
+                UserDefaults.standard.set(!UserDefaults.standard.bool(forKey: arrowsKey), forKey: arrowsKey)
+                
+                if UserDefaults.standard.bool(forKey: arrowsKey) == true {
+                    arrowsSelector.texture = SKTexture(imageNamed: "Select On")
+                    
+                } else {
+                    arrowsSelector.texture = SKTexture(imageNamed: "Select Off")
+                    
+                }
+            }
+            
         }
         
     }
@@ -47,6 +76,7 @@ class MainMenuScene: SKScene {
     func initialise() {
         getButtons()
         getLabel()
+        setupSelectors()
     }
     
     func getButtons() {
@@ -69,6 +99,27 @@ class MainMenuScene: SKScene {
         let sequence = SKAction.sequence([moveUp, moveDown])
         
         title.run(SKAction.repeatForever(sequence))
+    }
+    
+    func setupSelectors() {
+        numbersSelector = self.childNode(withName: "Numbers Selector") as! SKSpriteNode
+        arrowsSelector = self.childNode(withName: "Arrows Selector") as! SKSpriteNode
+        
+        if UserDefaults.standard.bool(forKey: numbersKey) == true {
+            numbersSelector.texture = SKTexture(imageNamed: "Select On")
+            
+        } else {
+            numbersSelector.texture = SKTexture(imageNamed: "Select Off")
+            
+        }
+        
+        if UserDefaults.standard.bool(forKey: arrowsKey) == true {
+            arrowsSelector.texture = SKTexture(imageNamed: "Select On")
+            
+        } else {
+            arrowsSelector.texture = SKTexture(imageNamed: "Select Off")
+            
+        }
     }
     
     func showScore() {

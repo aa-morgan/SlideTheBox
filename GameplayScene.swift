@@ -22,8 +22,10 @@ class GameplayScene: SKScene {
     
     var level = Level()
     var levelGenerator = LevelGenerator()
-    var useNumbers = true
-    var useArrows = true
+    //var useNumbers = true
+    //var useArrows = true
+    let numbersKey = "Use Numbers"
+    let arrowsKey = "Use Arrows"
     
     var numBlocksX = Int(16)
     var numBlocksY = Int(8)
@@ -108,7 +110,7 @@ class GameplayScene: SKScene {
     }
     
     func setupLevel() {
-        levelGenerator = LevelGenerator(numBlocksX: numBlocksX, numBlocksY: numBlocksY, useNumbers: useNumbers, useArrows: useArrows)
+        levelGenerator = LevelGenerator(numBlocksX: numBlocksX, numBlocksY: numBlocksY, useNumbers: UserDefaults.standard.bool(forKey: numbersKey), useArrows: UserDefaults.standard.bool(forKey: arrowsKey))
         level = levelGenerator.generate()
         currentPosition = level.getStartPosition()
         
