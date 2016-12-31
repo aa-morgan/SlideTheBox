@@ -20,10 +20,10 @@ class GameplayScene: SKScene {
     var playerBlock = SKSpriteNode()
     var endBlock = SKSpriteNode()
     
-    let levelType = "Number"
-    var basicLevel = BasicLevel()
-    var numberLevel = NumberLevel()
+    var level = Level()
     var levelGenerator = LevelGenerator()
+    var useNumbers = true
+    var useArrows = true
     
     var numBlocksX = Int(16)
     var numBlocksY = Int(8)
@@ -108,15 +108,9 @@ class GameplayScene: SKScene {
     }
     
     func setupLevel() {
-        levelGenerator = LevelGenerator(levelType: levelType, numBlocksX: numBlocksX, numBlocksY: numBlocksY)
-        let level = levelGenerator.generate()
+        levelGenerator = LevelGenerator(numBlocksX: numBlocksX, numBlocksY: numBlocksY, useNumbers: useNumbers, useArrows: useArrows)
+        level = levelGenerator.generate()
         currentPosition = level.getStartPosition()
-        
-        if levelType == "Basic" {
-            basicLevel = (level as! BasicLevel)
-        } else if levelType == "Number" {
-            numberLevel = (level as! NumberLevel)
-        }
         
         isMoving = false
         levelPaused = false
@@ -207,7 +201,7 @@ class GameplayScene: SKScene {
     
     func hintButtonPressed() {
         
-        let direction = levelGenerator.getSolver().solveForNextMove(level: getCurrentLevel(), customStart: currentPosition)
+        let direction = levelGenerator.getSolver().solveForNextMove(level: level, customStart: currentPosition)
         if (direction != "none") {
             handleMove(direction: direction)
         }
@@ -228,13 +222,14 @@ class GameplayScene: SKScene {
     }
     
     func handleMove(direction: String) {
-        var positions = Array<Array<Int>>()
-        var newPosition = Array<Int>()
-        var numMovesArray = Array<Int>()
-        var numMoves = Int()
         
         if (!isMoving && !levelPaused && !levelComplete) {
-            (positions, numMovesArray, levelComplete) = getCurrentLevel().calculateMove(position: currentPosition, direction: direction)
+            var positions = Array<Array<Int>>()
+            var newPosition = Array<Int>()
+            var numMovesArray = Array<Int>()
+            var numMoves = Int()
+            
+            (positions, numMovesArray, levelComplete) = level.calculateMove(position: currentPosition, direction: direction)
             newPosition = positions.last!
             numMoves = numMovesArray[0]
             
@@ -356,16 +351,5 @@ class GameplayScene: SKScene {
         
         self.addChild(popupPanel)
     }
-    
-    func getCurrentLevel() -> BaseLevel {
-        let level: BaseLevel
-        if levelType == "Basic" {
-            level = basicLevel
-        } else if levelType == "Number" {
-            level = numberLevel
-        } else {
-            level = basicLevel
-        }
-        return level
-    }
+
 }

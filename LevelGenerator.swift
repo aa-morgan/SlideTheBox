@@ -10,55 +10,43 @@ import SpriteKit
 
 class LevelGenerator {
     
-    var level: BaseLevel
-    var levelProposer: BaseLevelProposer
-    var levelSolver: BaseLevelSolver
-    var difficulty: BaseDifficultyCriteria
+    var level: Level
+    var levelProposer: LevelProposer
+    var levelSolver: LevelSolver
+    var difficulty: DifficultyCriteria
     var genStats: LevelGeneratorStatistics
     
     var numBlocksX = Int()
     var numBlocksY = Int()
     
+    var useNumbers = Bool()
+    var useArrows = Bool()
+    
     let testingStage = "all"
     
     // Temp init before the class is properly init
     init(){
-        self.level = BasicLevel()
-        self.levelProposer = BasicLevelProposer()
-        self.levelSolver = BasicLevelSolver()
-        self.difficulty = BasicDifficultyCriteria()
+        self.level = Level()
+        self.levelProposer = LevelProposer()
+        self.levelSolver = LevelSolver()
+        self.difficulty = DifficultyCriteria()
         self.genStats = LevelGeneratorStatistics()
     }
     
-    init(levelType: String, numBlocksX: Int, numBlocksY: Int) {
+    init(numBlocksX: Int, numBlocksY: Int, useNumbers: Bool, useArrows: Bool) {
         self.numBlocksX = numBlocksX
         self.numBlocksY = numBlocksY
+        self.useNumbers = useNumbers
+        self.useArrows = useArrows
         
-        if levelType == "Basic" {
-            self.level = BasicLevel()
-            self.levelProposer = BasicLevelProposer(numBlocksX: numBlocksX, numBlocksY: numBlocksY)
-            self.levelSolver = BasicLevelSolver()
-            self.difficulty = BasicDifficultyCriteria(difficulty: "easy")
-            
-        } else if levelType == "Number" {
-            // To Do
-            self.level = NumberLevel()
-            self.levelProposer = NumberLevelProposer(numBlocksX: numBlocksX, numBlocksY: numBlocksY)
-            self.levelSolver = NumberLevelSolver()
-            self.difficulty = NumberDifficultyCriteria(difficulty: "easy")
-            
-        } else { // Default
-            self.level = BasicLevel()
-            self.levelProposer = BasicLevelProposer(numBlocksX: numBlocksX, numBlocksY: numBlocksY)
-            self.levelSolver = BasicLevelSolver()
-            self.difficulty = BasicDifficultyCriteria(difficulty: "easy")
-            
-        }
-        
+        self.level = Level()
+        self.levelProposer = LevelProposer(numBlocksX: numBlocksX, numBlocksY: numBlocksY, useNumbers: useNumbers, useArrows: useArrows)
+        self.levelSolver = LevelSolver()
+        self.difficulty = DifficultyCriteria(difficulty: "easy")
         self.genStats = LevelGeneratorStatistics()
     }
     
-    func generate() -> BaseLevel {
+    func generate() -> Level {
         
         var levelSolvable = Bool()
         var levelStuckable = Bool()
@@ -101,7 +89,7 @@ class LevelGenerator {
         } else if testingStage == "propose" {
             level = levelProposer.propose(difficulty: difficulty)
         } else {
-            level = BasicLevel()
+            level = Level()
         }
 
         return level
@@ -116,7 +104,7 @@ class LevelGenerator {
         return Int(floor(blockCount))
     }
     
-    func getSolver() -> BaseLevelSolver {
+    func getSolver() -> LevelSolver {
         return self.levelSolver
     }
 
