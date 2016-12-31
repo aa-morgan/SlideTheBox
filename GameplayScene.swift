@@ -11,19 +11,20 @@ import SpriteKit
 class GameplayScene: SKScene {
     
     var pauseBtn = SKSpriteNode()
+    var hintBtn = SKSpriteNode()
+    var minMovesIndicator = SKLabelNode()
+    var curMovesIndicator = SKLabelNode()
     var homeBtn = SKSpriteNode()
     var resumeBtn = SKSpriteNode()
-    var hintBtn = SKSpriteNode()
     var newLevelBtn = SKSpriteNode()
     var popupPanel = SKSpriteNode()
+    var popupPanelLabel = SKLabelNode()
     
     var playerBlock = SKSpriteNode()
     var endBlock = SKSpriteNode()
     
     var level = Level()
     var levelGenerator = LevelGenerator()
-    //var useNumbers = true
-    //var useArrows = true
     let numbersKey = "Use Numbers"
     let arrowsKey = "Use Arrows"
     
@@ -35,6 +36,7 @@ class GameplayScene: SKScene {
     let blockGap = CGFloat(4)
     
     var currentPosition = Array<Int>()
+    var curNumMoves = 0
     
     var isMoving = Bool()
     var levelPaused = Bool()
@@ -61,6 +63,12 @@ class GameplayScene: SKScene {
                 }
             }
             
+            if atPoint(location).name == "Hint" {
+                if (!levelPaused && !levelComplete) {
+                    hintButtonPressed()
+                }
+            }
+            
             if atPoint(location).name == "Home" {
                 let mainMenu = MainMenuScene(fileNamed: "MainMenuScene")
                 mainMenu!.scaleMode = .aspectFill
@@ -73,13 +81,8 @@ class GameplayScene: SKScene {
                 levelPaused = false
             }
             
-            if atPoint(location).name == "Hint" {
-                if (!levelPaused && !levelComplete) {
-                    hintButtonPressed()
-                }
-            }
-            
             if atPoint(location).name == "New" {
+                popupPanelLabel.text = "Loading..."
                 let gameplay = GameplayScene(fileNamed: "GameplayScene")
                 gameplay!.scaleMode = .aspectFill
                 self.view?.presentScene(gameplay!)
@@ -107,6 +110,12 @@ class GameplayScene: SKScene {
     func setupMenuBar() {
         pauseBtn = self.childNode(withName: "Pause") as! SKSpriteNode
         hintBtn = self.childNode(withName: "Hint") as! SKSpriteNode
+        
+        minMovesIndicator = self.childNode(withName: "Minimum Moves") as! SKLabelNode
+        curMovesIndicator = self.childNode(withName: "Number Moves") as! SKLabelNode
+        
+        minMovesIndicator.text = "-"
+        curMovesIndicator.text = "-"
     }
     
     func setupLevel() {
@@ -140,6 +149,9 @@ class GameplayScene: SKScene {
             rowIndex += 1
         }
         
+        curNumMoves = 0
+        minMovesIndicator.text = String(level.getMinMoves())
+        curMovesIndicator.text = String(curNumMoves)
     }
     
     func setupPlayerBox(columnIndex: Int, rowIndex: Int) {
@@ -255,11 +267,11 @@ class GameplayScene: SKScene {
             var positions = Array<Array<Int>>()
             var newPosition = Array<Int>()
             var numMovesArray = Array<Int>()
-            // var numMoves = Int()
+            curNumMoves += 1
+            curMovesIndicator.text = String(curNumMoves)
             
             (positions, numMovesArray, levelComplete, _) = level.calculateMove(position: currentPosition, direction: direction)
             newPosition = positions.last!
-            //numMoves = numMovesArray[0]
             
             currentPosition = newPosition
             moveBox(toPositions: positions, numBlocks: numMovesArray)
@@ -310,18 +322,17 @@ class GameplayScene: SKScene {
         popupPanel.size = CGSize(width: 800, height: 500)
         popupPanel.zPosition = 11
         
-        let label = SKLabelNode()
         let resume = SKSpriteNode(imageNamed: "Play Button")
         let new = SKSpriteNode(imageNamed: "New Button")
         let quit = SKSpriteNode(imageNamed: "Home Button")
     
-        label.name = "Pause Label"
-        label.fontName = "Helvetica"
-        label.fontSize = 96
-        label.text = "Paused"
-        label.fontColor = UIColor(red: 153/255, green: 153/255, blue: 153/255, alpha: 1)
-        label.position = CGPoint(x: 0, y: 120)
-        label.zPosition = 11
+        popupPanelLabel.name = "Pause Label"
+        popupPanelLabel.fontName = "Helvetica"
+        popupPanelLabel.fontSize = 96
+        popupPanelLabel.text = "Paused"
+        popupPanelLabel.fontColor = UIColor(red: 153/255, green: 153/255, blue: 153/255, alpha: 1)
+        popupPanelLabel.position = CGPoint(x: 0, y: 120)
+        popupPanelLabel.zPosition = 11
         
         resume.name = "Resume"
         resume.anchorPoint = CGPoint(x: 0.5, y: 0.5)
@@ -341,7 +352,7 @@ class GameplayScene: SKScene {
         quit.size = CGSize(width: 200, height: 200)
         quit.zPosition = 12
         
-        popupPanel.addChild(label)
+        popupPanel.addChild(popupPanelLabel)
         popupPanel.addChild(resume)
         popupPanel.addChild(new)
         popupPanel.addChild(quit)
@@ -359,17 +370,16 @@ class GameplayScene: SKScene {
         popupPanel.size = CGSize(width: 800, height: 500)
         popupPanel.zPosition = 11
         
-        let label = SKLabelNode()
         let new = SKSpriteNode(imageNamed: "New Button")
         let quit = SKSpriteNode(imageNamed: "Home Button")
         
-        label.name = "Level Complete Label"
-        label.fontName = "Helvetica"
-        label.fontSize = 96
-        label.text = "Level Complete"
-        label.fontColor = UIColor(red: 153/255, green: 153/255, blue: 153/255, alpha: 1)
-        label.position = CGPoint(x: 0, y: 120)
-        label.zPosition = 11
+        popupPanelLabel.name = "Level Complete Label"
+        popupPanelLabel.fontName = "Helvetica"
+        popupPanelLabel.fontSize = 96
+        popupPanelLabel.text = "Level Complete"
+        popupPanelLabel.fontColor = UIColor(red: 153/255, green: 153/255, blue: 153/255, alpha: 1)
+        popupPanelLabel.position = CGPoint(x: 0, y: 120)
+        popupPanelLabel.zPosition = 11
         
         new.name = "New"
         new.anchorPoint = CGPoint(x: 0.5, y: 0.5)
@@ -383,7 +393,7 @@ class GameplayScene: SKScene {
         quit.size = CGSize(width: 200, height: 200)
         quit.zPosition = 12
         
-        popupPanel.addChild(label)
+        popupPanel.addChild(popupPanelLabel)
         popupPanel.addChild(new)
         popupPanel.addChild(quit)
         
