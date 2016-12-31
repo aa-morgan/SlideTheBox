@@ -10,5 +10,18 @@ import SpriteKit
 
 class NumberDifficultyCriteria: BasicDifficultyCriteria {
     
+    var numNumberBlocksUsed = Int()
     
+    
+    func getNumNumberBlocksUsed() -> Int {
+        return self.numNumberBlocksUsed
+    }
+    
+    func setNumNumberBlocksUsed(number: Int) {
+        self.numNumberBlocksUsed = number
+    }
+    
+    func incrementNumNumberBlocksUsed(number: Int) {
+        self.numNumberBlocksUsed += 1
+    }
 }

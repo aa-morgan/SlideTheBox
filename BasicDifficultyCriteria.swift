@@ -10,13 +10,13 @@ import Foundation
 
 class BasicDifficultyCriteria: BaseDifficultyCriteria {
     
-    private var minMoves = Int()
-    private var percentOfBlockBlocks = Float()
-    private var maxExplorationStage = Int()
-    private var numberOfExplorablePositions = Int()
-    private var averageMoveDistance = Float()
-    private var percentOfRouteOnBoundary = Float()
-    private var endBlockOnBoundary = Bool()
+    var minMoves = Int()
+    var percentOfBlockBlocks = Float()
+    var maxExplorationStage = Int()
+    var numberOfExplorablePositions = Int()
+    var averageMoveDistance = Float()
+    var percentOfRouteOnBoundary = Float()
+    var endBlockOnBoundary = Bool()
     
     init() {
     }
@@ -38,8 +38,8 @@ class BasicDifficultyCriteria: BaseDifficultyCriteria {
     
     func met(level: BaseLevel) -> Bool {
         
-        if (getMinMoves(level: level as! BasicLevel) >= self.minMoves &&
-            getPercentOfBlockBlocks(level: level as! BasicLevel) <= self.percentOfBlockBlocks) {
+        if (getMinMoves(level: level) >= self.minMoves &&
+            getPercentOfBlockBlocks(level: level) <= self.percentOfBlockBlocks) {
             return true
         } else {
             return false
@@ -55,7 +55,7 @@ class BasicDifficultyCriteria: BaseDifficultyCriteria {
     }
     
     func getMinMoves(level: BaseLevel) -> Int {
-        return (level as! BasicLevel).getMinMoves()
+        return level.getMinMoves()
     }
     
     func getMinMovesCriteria() -> Int {
@@ -63,7 +63,7 @@ class BasicDifficultyCriteria: BaseDifficultyCriteria {
     }
     
     func getPercentOfBlockBlocks(level: BaseLevel) -> Float {
-        return Float((level as! BasicLevel).getNumBlockBlocks()) / Float(((level as! BasicLevel).getNumBlocks()))
+        return Float(level.getNumBlockBlocks()) / Float((level.getNumBlocks()))
     }
     
     func getPercentOfBlockBlocksCriteria() -> Float {
@@ -71,7 +71,7 @@ class BasicDifficultyCriteria: BaseDifficultyCriteria {
     }
     
     func getMaxExplorationStage(level: BaseLevel) -> Int {
-        let (value, _) = (level as! BasicLevel).twoDimMax(array: (level as! BasicLevel).getBlocksExploration())
+        let (value, _) = level.twoDimMax(array: level.getBlocksExploration())
         return value
     }
     
@@ -80,7 +80,7 @@ class BasicDifficultyCriteria: BaseDifficultyCriteria {
         
         var row = 0
         var col = 0
-        for curRow in (level as! BasicLevel).getBlocksExploration() {
+        for curRow in level.getBlocksExploration() {
             for stage in curRow {
                 
                 if (stage > 0) {
@@ -97,52 +97,54 @@ class BasicDifficultyCriteria: BaseDifficultyCriteria {
     }
     
     func getAverageMoveDistance(level: BaseLevel) -> Float {
-        var routePositions = (level as! BasicLevel).getRoutePositions()
-        let numMoves = routePositions.count - 1
-        var distance = Int()
-        var totalDistance = Int(0)
-        
-        var lastPosition = routePositions.remove(at: 0)
-
-        for position in routePositions {
-            distance = distanceBetween(from: lastPosition, to: position)
-            totalDistance += distance
-            
-            lastPosition = position
-        }
-        
-        let averageMoveDistance = Float(totalDistance) / Float(numMoves)
-        return averageMoveDistance
+//        var routePositions = level.getRoutePositions()
+//        let numMoves = routePositions.count - 1
+//        var distance = Int()
+//        var totalDistance = Int(0)
+//        
+//        var lastPosition = routePositions.remove(at: 0)
+//
+//        for position in routePositions {
+//            distance = distanceBetween(from: lastPosition, to: position)
+//            totalDistance += distance
+//            
+//            lastPosition = position
+//        }
+//        
+//        let averageMoveDistance = Float(totalDistance) / Float(numMoves)
+//        return averageMoveDistance
+        return 0
     }
     
     func getPercentOfRouteOnBoundary(level: BaseLevel) -> Float {
-        var routePositions = (level as! BasicLevel).getRoutePositions()
-        var distance = Int()
-        var totalDistanceOn = Int(0)
-        var totalDistanceOff = Int(0)
-        
-        var lastPosition = routePositions.remove(at: 0)
-        
-        for position in routePositions {
-            distance = distanceBetween(from: lastPosition, to: position)
-            if ((level as! BasicLevel).isPositionOnBoundary(position: lastPosition) &&
-                (level as! BasicLevel).isPositionOnBoundary(position: position)) {
-                totalDistanceOn += distance
-            } else {
-                totalDistanceOff += distance
-            }
-            
-            lastPosition = position
-        }
-        
-        let percentOfRouteOnBoundary = Float(totalDistanceOn) / Float(totalDistanceOn + totalDistanceOff)
-        return percentOfRouteOnBoundary
+//        var routePositions = level.getRoutePositions()
+//        var distance = Int()
+//        var totalDistanceOn = Int(0)
+//        var totalDistanceOff = Int(0)
+//        
+//        var lastPosition = routePositions.remove(at: 0)
+//        
+//        for position in routePositions {
+//            distance = distanceBetween(from: lastPosition, to: position)
+//            if (level.isPositionOnBoundary(position: lastPosition) &&
+//                level.isPositionOnBoundary(position: position)) {
+//                totalDistanceOn += distance
+//            } else {
+//                totalDistanceOff += distance
+//            }
+//            
+//            lastPosition = position
+//        }
+//        
+//        let percentOfRouteOnBoundary = Float(totalDistanceOn) / Float(totalDistanceOn + totalDistanceOff)
+//        return percentOfRouteOnBoundary
+        return 0
     }
     
     func isEndBlockOnBoundary(level: BaseLevel) -> Bool {
-        let endPosition = (level as! BasicLevel).getEndPosition()
+        let endPosition = level.getEndPosition()
         
-        return (level as! BasicLevel).isPositionOnBoundary(position: endPosition)
+        return level.isPositionOnBoundary(position: endPosition)
     }
     
     func distanceBetween(from: Array<Int>, to: Array<Int>) -> Int {

@@ -84,7 +84,7 @@ class BasicLevelProposer: BaseLevelProposer {
         return (blocksReal: blocksReal, startPosition: startPosition, endPosition: endPosition)
     }
     
-    func generateNumBlockBlocks(difficulty: BasicDifficultyCriteria) -> Int {
+    func generateNumBlockBlocks(difficulty: BaseDifficultyCriteria) -> Int {
         //            let levelNumBlocks = (numBlocksX*numBlocksY)/8
         
         let levelMaxBlocks = difficulty.getPercentOfBlockBlocksCriteria() * Float(numBlocksX * numBlocksY)

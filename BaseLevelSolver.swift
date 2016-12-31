@@ -12,5 +12,4 @@ protocol BaseLevelSolver {
     
     func solve(level: BaseLevel)
     func solveForNextMove(level: BaseLevel, customStart: Array<Int>) -> String
-    func routeToEnd(level: BaseLevel, customStart: Array<Int>) -> (routePositions: Array<Array<Int>>, routeDirections: Array<String>)
 }

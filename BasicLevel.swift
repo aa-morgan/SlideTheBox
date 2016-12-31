@@ -12,9 +12,8 @@ class BasicLevel: BaseLevel {
     
     var blocksReal = Array<Array<Int>>()
     var blocksExploration = Array<Array<Int>>()
+    var calculatedRoute = Array<Array<Array<Array<Int>>>>()
     var numBlockBlocks = Int()
-    var routePositions = Array<Array<Int>>()
-    var routeDirections = Array<String>()
     
     var numBlocksX = Int()
     var numBlocksY = Int()
@@ -36,6 +35,7 @@ class BasicLevel: BaseLevel {
         
         blocksReal = Array(repeating: Array(repeating: 0, count: numBlocksX), count: numBlocksY)
         blocksExploration = Array(repeating: Array(repeating: 0, count: numBlocksX), count: numBlocksY)
+        calculatedRoute = Array(repeating: Array(repeating: Array<Array<Int>>(), count: numBlocksX), count: numBlocksY)
     }
     
     func calculateMove(position: Array<Int>, direction: String)
@@ -44,9 +44,11 @@ class BasicLevel: BaseLevel {
         var finished = false
         var col = position[0]
         var row = position[1]
-        var newPosition = position
         var numMoves = 0
         var endBlock = false
+        var positions = Array<Array<Int>>()
+        var newPosition = position
+        positions.append(newPosition)
         
         while(!finished) {
             (col, row) = incrementPosition(col: col, row: row, direction: direction, amount: 1)
@@ -68,7 +70,6 @@ class BasicLevel: BaseLevel {
         }
         
         newPosition = incrementPosition(position: newPosition, direction: direction, amount: numMoves)
-        var positions = Array<Array<Int>>()
         positions.append(newPosition)
         
         return (positions: positions, numMoves: [numMoves], endBlock: endBlock)
@@ -187,6 +188,22 @@ class BasicLevel: BaseLevel {
         self.blocksExploration = Array(repeating: Array(repeating: 0, count: numBlocksX), count: numBlocksY)
     }
     
+    func getCalculatedRoute() -> Array<Array<Array<Array<Int>>>> {
+        return self.calculatedRoute
+    }
+    
+    func setCalculatedRoute(calculatedRoute: Array<Array<Array<Array<Int>>>>) {
+        self.calculatedRoute = calculatedRoute
+    }
+    
+    func setCalculatedRouteValue(position: Array<Int>, value: Array<Array<Int>>) {
+        self.calculatedRoute[position[1]][position[0]] = value
+    }
+    
+    func resetCalculatedRoute() {
+        self.calculatedRoute = Array(repeating: Array(repeating: Array<Array<Int>>(), count: numBlocksX), count: numBlocksY)
+    }
+    
     func getStartPosition() -> Array<Int> {
         return self.startPosition
     }
@@ -225,22 +242,6 @@ class BasicLevel: BaseLevel {
     
     func getNumBlocks() -> Int {
         return self.numBlocksX * self.numBlocksY
-    }
-    
-    func getRoutePositions() -> Array<Array<Int>> {
-        return routePositions
-    }
-    
-    func setRoutePositions(positions: Array<Array<Int>>) {
-        routePositions = positions
-    }
-    
-    func getRouteDirections() -> Array<String> {
-        return routeDirections
-    }
-    
-    func setRouteDirections(directions: Array<String>) {
-        routeDirections = directions
     }
     
 }

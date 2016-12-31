@@ -13,8 +13,8 @@ class NumberLevelProposer: BasicLevelProposer {
     override func propose(difficulty: BaseDifficultyCriteria) -> BaseLevel {
         
         let level = NumberLevel(numBlocksX: numBlocksX, numBlocksY: numBlocksY)
-        let numBlocks = generateNumBlockBlocks(difficulty: (difficulty as! BasicDifficultyCriteria))
-        let numNumbers = generateNumNumberBlocks(difficulty: (difficulty as! BasicDifficultyCriteria))
+        let numBlocks = generateNumBlockBlocks(difficulty: difficulty)
+        let numNumbers = generateNumNumberBlocks(difficulty: difficulty)
         
         var startPosition = Array<Int>()
         var endPosition = Array<Int>()
@@ -55,7 +55,7 @@ class NumberLevelProposer: BasicLevelProposer {
         return newBlocksReal
     }
     
-    func generateNumNumberBlocks(difficulty: BasicDifficultyCriteria) -> Int {
+    func generateNumNumberBlocks(difficulty: BaseDifficultyCriteria) -> Int {
        
         let maxNumNumberBlocks = 4
         let levelNumBlocks = Int(arc4random_uniform(UInt32(maxNumNumberBlocks))+1)

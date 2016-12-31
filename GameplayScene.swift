@@ -235,7 +235,7 @@ class GameplayScene: SKScene {
         
         if (!isMoving && !levelPaused && !levelComplete) {
             (positions, numMovesArray, levelComplete) = getCurrentLevel().calculateMove(position: currentPosition, direction: direction)
-            newPosition = positions[0]
+            newPosition = positions.last!
             numMoves = numMovesArray[0]
             
             currentPosition = newPosition

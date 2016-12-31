@@ -19,7 +19,7 @@ class LevelGenerator {
     var numBlocksX = Int()
     var numBlocksY = Int()
     
-    let testingStage = "propose"
+    let testingStage = "all"
     
     // Temp init before the class is properly init
     init(){

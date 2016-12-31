@@ -10,5 +10,4 @@ import SpriteKit
 
 class NumberLevelSolver: BasicLevelSolver {
     
-    
 }
