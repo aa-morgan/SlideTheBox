@@ -19,18 +19,22 @@ class LevelSolver {
     }
     
     // Given a BasicLevel and a custom start position, return the next move
-    func solveForNextMove(level: Level, customStart: Array<Int>) -> String {
+    func solveForNextMove(level: Level, customStart: Array<Int>, customEnd: Array<Int>) -> (direction: String, notFound: Bool) {
         var nextMove = String()
+        var notFound = Bool()
         
-        if !(level.getEndPosition() == customStart) {
+        if !(customEnd == customStart) {
             let calculatedRoute = customSolve(level: level, customStart: customStart)
-            nextMove = nextMoveFromRoute(calculatedRoute: calculatedRoute, startPosition: customStart, endPosition: level.getEndPosition())
+            (nextMove, notFound) = nextMoveFromRoute(calculatedRoute: calculatedRoute, startPosition: customStart, endPosition: customEnd)
+            
+            if notFound {
+                return (direction: "none", notFound: true)
+            }
         } else {
-            nextMove = "none"
-            print("Error (in BasicLevelSolver.solveForNextMove): CustomStart is equal to EndPosition!")
+            return (direction: "none", notFound: true)
         }
         
-        return nextMove
+        return (direction: nextMove, notFound: false)
     }
     
     // Given a BasicLevel and custom start location, return the respective calculatedRoute
@@ -48,7 +52,7 @@ class LevelSolver {
         return customCalculatedRoute
     }
     
-    func nextMoveFromRoute(calculatedRoute: Array<Array<Array<Array<Int>>>>, startPosition: Array<Int>, endPosition: Array<Int>) -> String {
+    func nextMoveFromRoute(calculatedRoute: Array<Array<Array<Array<Int>>>>, startPosition: Array<Int>, endPosition: Array<Int>) -> (direction: String, notFound: Bool) {
         
         var currentPosition = endPosition
         var currentRoute: Array<Array<Int>>
@@ -58,6 +62,10 @@ class LevelSolver {
             
             currentRoute = calculatedRoute[currentPosition[1]][currentPosition[0]]
             
+            if currentRoute.isEmpty {
+                return (direction: "none", notFound: true)
+            }
+            
             if currentRoute.first! == startPosition {
                 finished = true
             } else {
@@ -66,7 +74,7 @@ class LevelSolver {
             
         } while (!finished)
         
-        return directionBetween(from: startPosition, to: currentRoute[1])
+        return (direction: directionBetween(from: startPosition, to: currentRoute[1]), notFound: false)
     }
     
     // Main exploration algorithm
@@ -101,7 +109,7 @@ class LevelSolver {
                     if [col, row] != level.getEndPosition() {
                         numSpans += 1
                         for direction in directions {
-                            (positions, _, _, infiniteArrowLoop) = level.calculateMove(position: [col, row], direction: direction)
+                            (positions, _, _, infiniteArrowLoop) = level.calculateMove(position: [col, row], direction: direction, blockType: "player")
                             newPosition = positions.last!
                             if level.getSolution().getBlocksExplorationValue(position: newPosition) == 0 {
                                 level.getSolution().setBlocksExplorationValue(position: newPosition,

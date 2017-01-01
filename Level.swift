@@ -34,7 +34,7 @@ class Level {
         levelSolution = LevelSolution(numBlocksX: numBlocksX, numBlocksY: numBlocksY)
     }
     
-    func calculateMove(position: Array<Int>, direction: String)
+    func calculateMove(position: Array<Int>, direction: String, blockType: String)
         -> (positions: Array<Array<Int>>, numMoves: Array<Int>, endBlock: Bool, infiniteArrowLoop: Bool) {
             
             var finished = false
@@ -81,10 +81,12 @@ class Level {
                     if (row >= 0 && row < numBlocksY) && (col >= 0 && col < numBlocksX) {
                         if blocksReal[row][col] == 0 || blocksReal[row][col] == 8 { // Empty or start Block
                             numMoves += 1
-                        } else if blocksReal[row][col] == 9 { // End Block
+                        } else if blocksReal[row][col] == 9 && blockType == "player" { // End Block
                             numMoves += 1
                             finished = true
                             endBlock = true
+                        } else if blocksReal[row][col] == 9 && blockType == "enemy" { // treat as blank
+                            numMoves += 1
                         } else if (blocksReal[row][col] >= 10 && blocksReal[row][col] <= 18) { // Number block
                             hitNumber = true
                             numberRemaining = blocksReal[row][col] - 10

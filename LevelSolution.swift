@@ -42,6 +42,29 @@ class LevelSolution {
         calculatedRoute = Array(repeating: Array(repeating: Array<Array<Int>>(), count: numBlocksX), count: numBlocksY)
     }
     
+    func getExplorablePosition(greaterThan: Int, level: Level, seed: Int) -> Array<Int> {
+        
+        var row = 0
+        var col = 0
+        var numFound = 0
+        for curRow in getBlocksExploration() {
+            for expStage in curRow {
+                if (expStage > greaterThan) && (level.getBlocksRealValue(position: [col, row]) == 0) {
+                    numFound += 1
+                    if numFound == seed {
+                        return [col, row]
+                    }
+                }
+                col += 1
+            }
+            col = 0
+            row += 1
+        }
+        
+        print("Error (in LevelSolution.getExplorablePosition): Couldn't find suitable position!")
+        return [0, 0]
+    }
+    
     func isSolved() -> Bool {
         return solved
     }

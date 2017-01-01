@@ -17,8 +17,10 @@ class MainMenuScene: SKScene {
     
     var numbersSelector = SKSpriteNode()
     var arrowsSelector = SKSpriteNode()
+    var enemiesSelector = SKSpriteNode()
     let numbersKey = "Use Numbers"
     let arrowsKey = "Use Arrows"
+    let enemiesKey = "Use Enemies"
     
     override func didMove(to view: SKView) {
         initialise();
@@ -69,6 +71,18 @@ class MainMenuScene: SKScene {
                 }
             }
             
+            if atPoint(location) == enemiesSelector {
+                UserDefaults.standard.set(!UserDefaults.standard.bool(forKey: enemiesKey), forKey: enemiesKey)
+                
+                if UserDefaults.standard.bool(forKey: enemiesKey) == true {
+                    enemiesSelector.texture = SKTexture(imageNamed: "Select On")
+                    
+                } else {
+                    enemiesSelector.texture = SKTexture(imageNamed: "Select Off")
+                    
+                }
+            }
+            
         }
         
     }
@@ -104,6 +118,7 @@ class MainMenuScene: SKScene {
     func setupSelectors() {
         numbersSelector = self.childNode(withName: "Numbers Selector") as! SKSpriteNode
         arrowsSelector = self.childNode(withName: "Arrows Selector") as! SKSpriteNode
+        enemiesSelector = self.childNode(withName: "Enemies Selector") as! SKSpriteNode
         
         if UserDefaults.standard.bool(forKey: numbersKey) == true {
             numbersSelector.texture = SKTexture(imageNamed: "Select On")
@@ -118,6 +133,14 @@ class MainMenuScene: SKScene {
             
         } else {
             arrowsSelector.texture = SKTexture(imageNamed: "Select Off")
+            
+        }
+        
+        if UserDefaults.standard.bool(forKey: enemiesKey) == true {
+            enemiesSelector.texture = SKTexture(imageNamed: "Select On")
+            
+        } else {
+            enemiesSelector.texture = SKTexture(imageNamed: "Select Off")
             
         }
     }

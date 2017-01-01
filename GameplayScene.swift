@@ -22,11 +22,17 @@ class GameplayScene: SKScene {
     
     var playerBlock = SKSpriteNode()
     var endBlock = SKSpriteNode()
+    var enemyBlocks = Array<SKSpriteNode>()
+    let numOfEnemies = 2
     
     var level = Level()
     var levelGenerator = LevelGenerator()
     let numbersKey = "Use Numbers"
     let arrowsKey = "Use Arrows"
+    let enemiesKey = "Use Enemies"
+    var useNumbers = Bool()
+    var useArrows = Bool()
+    var useEnemies = Bool()
     
     var numBlocksX = Int(16)
     var numBlocksY = Int(8)
@@ -35,10 +41,13 @@ class GameplayScene: SKScene {
     let menuBarHeight = CGFloat(100)
     let blockGap = CGFloat(4)
     
-    var currentPosition = Array<Int>()
+    var currentPlayerPosition = Array<Int>()
+    var previousPlayerPosition = Array<Int>()
+    var currentEnemyPositions = Array<Array<Int>>()
     var curNumMoves = 0
     
-    var isMoving = Bool()
+    var playerIsMoving = Bool()
+    var enemiesMoving = Int()
     var levelPaused = Bool()
     var levelComplete = Bool()
     
@@ -104,6 +113,10 @@ class GameplayScene: SKScene {
         blockWidth = playableWidth / CGFloat(numBlocksX)
         blockHeight = playableHeight / CGFloat(numBlocksY)
         
+        useNumbers = UserDefaults.standard.bool(forKey: numbersKey)
+        useArrows = UserDefaults.standard.bool(forKey: arrowsKey)
+        useEnemies = UserDefaults.standard.bool(forKey: enemiesKey)
+    
     }
     
     func setupMenuBar() {
@@ -118,11 +131,11 @@ class GameplayScene: SKScene {
     }
     
     func setupLevel() {
-        levelGenerator = LevelGenerator(numBlocksX: numBlocksX, numBlocksY: numBlocksY, useNumbers: UserDefaults.standard.bool(forKey: numbersKey), useArrows: UserDefaults.standard.bool(forKey: arrowsKey))
+        levelGenerator = LevelGenerator(numBlocksX: numBlocksX, numBlocksY: numBlocksY, useNumbers: useNumbers, useArrows: useArrows)
         level = levelGenerator.generate()
-        currentPosition = level.getStartPosition()
+        currentPlayerPosition = level.getStartPosition()
         
-        isMoving = false
+        playerIsMoving = false
         levelPaused = false
         levelComplete = false
         
@@ -148,9 +161,15 @@ class GameplayScene: SKScene {
             rowIndex += 1
         }
         
+        if useEnemies {
+            setupEnemyBlocks(level: level)
+        }
+        
         curNumMoves = 0
         minMovesIndicator.text = String(level.getMinMoves())
         curMovesIndicator.text = String(curNumMoves)
+        
+        previousPlayerPosition = level.getStartPosition()
     }
     
     func setupPlayerBox(columnIndex: Int, rowIndex: Int) {
@@ -173,6 +192,28 @@ class GameplayScene: SKScene {
         endBlock.zPosition = 5
         
         self.addChild(endBlock)
+    }
+    
+    func setupEnemyBlocks(level: Level) {
+    
+        for index in 1...numOfEnemies {
+            
+            let explorablePosition = level.getSolution().getExplorablePosition(greaterThan: level.getMinMoves()-1, level: level, seed: index)
+            let columnIndex = explorablePosition[0]
+            let rowIndex = explorablePosition[1]
+            
+            let enemyBlock = SKSpriteNode(imageNamed: "Enemy Block")
+            enemyBlock.size = CGSize(width: blockWidth, height: blockHeight)
+            enemyBlock.anchorPoint = CGPoint(x: 0, y: 1)
+            enemyBlock.name = "Enemy Block"
+            enemyBlock.position = CGPoint(x: CGFloat(columnIndex) * blockWidth, y: -(CGFloat(rowIndex) * blockHeight))
+            enemyBlock.zPosition = 7
+            
+            enemyBlocks.append(enemyBlock)
+            currentEnemyPositions.append(explorablePosition)
+            self.addChild(enemyBlock)
+        }
+
     }
     
     func addBlockBlock(columnIndex: Int, rowIndex: Int) {
@@ -240,7 +281,7 @@ class GameplayScene: SKScene {
     
     func hintButtonPressed() {
         
-        let direction = levelGenerator.getSolver().solveForNextMove(level: level, customStart: currentPosition)
+        let (direction, _) = levelGenerator.getSolver().solveForNextMove(level: level, customStart: currentPlayerPosition, customEnd: level.getEndPosition())
         if (direction != "none") {
             handleMove(direction: direction)
         }
@@ -262,24 +303,60 @@ class GameplayScene: SKScene {
     
     func handleMove(direction: String) {
         
-        if (!isMoving && !levelPaused && !levelComplete) {
+        if (!playerIsMoving && enemiesMoving == 0 && !levelPaused && !levelComplete) {
             var positions = Array<Array<Int>>()
             var newPosition = Array<Int>()
             var numMovesArray = Array<Int>()
             curNumMoves += 1
             curMovesIndicator.text = String(curNumMoves)
             
-            (positions, numMovesArray, levelComplete, _) = level.calculateMove(position: currentPosition, direction: direction)
+            (positions, numMovesArray, levelComplete, _) = level.calculateMove(position: currentPlayerPosition, direction: direction, blockType: "player")
             newPosition = positions.last!
             
-            currentPosition = newPosition
-            moveBox(toPositions: positions, numBlocks: numMovesArray)
+            currentPlayerPosition = newPosition
+            moveBlock(spriteNode: playerBlock, type: "player", toPositions: positions, numBlocks: numMovesArray)
+            
+            if useEnemies {
+                var enemyPositions = Array<Array<Int>>()
+                var enemyNewPosition = Array<Int>()
+                var enemyNumMovesArray = Array<Int>()
+
+                var index = 0
+                for enemyBlock in enemyBlocks {
+                    
+                    var (enemyDirection, notFound) = levelGenerator.getSolver().solveForNextMove(level: level, customStart: currentEnemyPositions[index], customEnd: currentPlayerPosition)
+                    
+                    if notFound {
+                        (enemyDirection, notFound) = levelGenerator.getSolver().solveForNextMove(level: level, customStart: currentEnemyPositions[index], customEnd: previousPlayerPosition)
+                    }
+                    
+                    if notFound {
+                        (enemyDirection, _) = levelGenerator.getSolver().solveForNextMove(level: level, customStart: currentEnemyPositions[index], customEnd: level.getEndPosition())
+                    }
+                    
+                    (enemyPositions, enemyNumMovesArray, _, _) = level.calculateMove(position: currentEnemyPositions[index], direction: enemyDirection, blockType: "enemy")
+                    enemyNewPosition = enemyPositions.last!
+                    
+                    currentEnemyPositions[index] = enemyNewPosition
+                    moveBlock(spriteNode: enemyBlock, type: "enemy", toPositions: enemyPositions, numBlocks: enemyNumMovesArray)
+                    
+                    index += 1
+                }
+                
+            }
+            
+            previousPlayerPosition = currentPlayerPosition
         }
     }
     
-    func moveBox(toPositions: Array<Array<Int>>, numBlocks: Array<Int>) {
+    func moveBlock(spriteNode: SKSpriteNode, type: String, toPositions: Array<Array<Int>>, numBlocks: Array<Int>) {
         
-        isMoving = true
+        if type == "player" {
+            playerIsMoving = true
+        } else if type == "enemy" {
+            enemiesMoving += 1
+        }
+        
         
         var moveTime = TimeInterval()
         var moveToPosition = CGPoint()
@@ -299,16 +376,24 @@ class GameplayScene: SKScene {
             index += 1
         }
         
-        playerBlock.run(SKAction.sequence(moveAnimations), completion: moveComplete)
+        if type == "player" {
+            spriteNode.run(SKAction.sequence(moveAnimations), completion: movePlayerComplete)
+        } else if type == "enemy" {
+            spriteNode.run(SKAction.sequence(moveAnimations), completion: moveEnemyComplete)
+        }
 
     }
     
-    func moveComplete() -> Void {
-        isMoving = false
+    func movePlayerComplete() -> Void {
+        playerIsMoving = false
         
         if (levelComplete) {
             createLevelCompletePanel()
         }
+    }
+    
+    func moveEnemyComplete() -> Void {
+        enemiesMoving -= 1
     }
     
     func createPausePanel() {
