@@ -50,6 +50,7 @@ class GameplayScene: SKScene {
     var enemiesMoving = Int()
     var levelPaused = Bool()
     var levelComplete = Bool()
+    var levelLost = Bool()
     
     let perBlockTime = CGFloat(0.1)
     
@@ -138,6 +139,7 @@ class GameplayScene: SKScene {
         playerIsMoving = false
         levelPaused = false
         levelComplete = false
+        levelLost = false
         
         var rowIndex = 0
         var columnIndex = 0
@@ -281,7 +283,7 @@ class GameplayScene: SKScene {
     
     func hintButtonPressed() {
         
-        let (direction, _) = levelGenerator.getSolver().solveForNextMove(level: level, customStart: currentPlayerPosition, customEnd: level.getEndPosition())
+        let (direction, _) = levelGenerator.getSolver().solveForNextMove(level: level, customStart: currentPlayerPosition, customEnd: level.getEndPosition(), blockType: "player")
         if (direction != "none") {
             handleMove(direction: direction)
         }
@@ -303,7 +305,7 @@ class GameplayScene: SKScene {
     
     func handleMove(direction: String) {
         
-        if (!playerIsMoving && enemiesMoving == 0 && !levelPaused && !levelComplete) {
+        if (!playerIsMoving && enemiesMoving == 0 && !levelPaused && !levelComplete && !levelLost) {
             var positions = Array<Array<Int>>()
             var newPosition = Array<Int>()
             var numMovesArray = Array<Int>()
@@ -324,14 +326,30 @@ class GameplayScene: SKScene {
                 var index = 0
                 for enemyBlock in enemyBlocks {
                     
-                    var (enemyDirection, notFound) = levelGenerator.getSolver().solveForNextMove(level: level, customStart: currentEnemyPositions[index], customEnd: currentPlayerPosition)
+                    var notFound = false
+                    var enemyDirection = "none"
                     
-                    if notFound {
-                        (enemyDirection, notFound) = levelGenerator.getSolver().solveForNextMove(level: level, customStart: currentEnemyPositions[index], customEnd: previousPlayerPosition)
+                    // Try to move to players new position
+                    if (currentEnemyPositions[index] != currentPlayerPosition) {
+                        (enemyDirection, notFound) = levelGenerator.getSolver().solveForNextMove(level: level, customStart: currentEnemyPositions[index], customEnd: currentPlayerPosition, blockType: "enemy")
                     }
                     
+                    // If the enemy is already at that position, then try the players previous position
+                    else if (currentEnemyPositions[index] != previousPlayerPosition) {
+                        (enemyDirection, notFound) = levelGenerator.getSolver().solveForNextMove(level: level, customStart: currentEnemyPositions[index], customEnd: previousPlayerPosition, blockType: "enemy")
+                    }
+                    
+                    // If the enemy cannot access either current or previous position, then move in random direction.
                     if notFound {
-                        (enemyDirection, _) = levelGenerator.getSolver().solveForNextMove(level: level, customStart: currentEnemyPositions[index], customEnd: level.getEndPosition())
+                        var enemyMoved = false
+                        repeat {
+                            enemyDirection = levelGenerator.getSolver().randomDirection()
+                            (enemyPositions, enemyNumMovesArray, _, _) = level.calculateMove(position: currentEnemyPositions[index], direction: enemyDirection, blockType: "enemy")
+                            if enemyPositions.first! != enemyPositions.last! {
+                                enemyMoved = true
+                            }
+                        } while(!enemyMoved)
+                        
                     }
                     
                     (enemyPositions, enemyNumMovesArray, _, _) = level.calculateMove(position: currentEnemyPositions[index], direction: enemyDirection, blockType: "enemy")
@@ -339,13 +357,19 @@ class GameplayScene: SKScene {
                     
                     currentEnemyPositions[index] = enemyNewPosition
                     moveBlock(spriteNode: enemyBlock, type: "enemy", toPositions: enemyPositions, numBlocks: enemyNumMovesArray)
-                    
+
                     index += 1
                 }
                 
             }
             
             previousPlayerPosition = currentPlayerPosition
+            
+            for currentEnemyPosition in currentEnemyPositions {
+                if currentEnemyPosition == currentPlayerPosition {
+                    levelLost = true
+                }
+            }
         }
     }
     
@@ -387,17 +411,24 @@ class GameplayScene: SKScene {
     func movePlayerComplete() -> Void {
         playerIsMoving = false
         
-        if (levelComplete) {
+        if (levelComplete && !levelLost) {
             createLevelCompletePanel()
+        }
+        
+        if levelLost && !playerIsMoving && enemiesMoving == 0 {
+            createGameOverPanel()
         }
     }
     
     func moveEnemyComplete() -> Void {
         enemiesMoving -= 1
+        
+        if levelLost && !playerIsMoving && enemiesMoving == 0 {
+            createGameOverPanel()
+        }
     }
     
     func createPausePanel() {
-        levelPaused = true
         self.scene?.isPaused = true
         
         popupPanel = SKSpriteNode(imageNamed: "Panel")
@@ -445,7 +476,6 @@ class GameplayScene: SKScene {
     }
     
     func createLevelCompletePanel() {
-        levelComplete = true
         self.scene?.isPaused = true
         
         popupPanel = SKSpriteNode(imageNamed: "Panel")
@@ -461,6 +491,45 @@ class GameplayScene: SKScene {
         popupPanelLabel.fontName = "Helvetica"
         popupPanelLabel.fontSize = 96
         popupPanelLabel.text = "Level Complete"
+        popupPanelLabel.fontColor = UIColor(red: 153/255, green: 153/255, blue: 153/255, alpha: 1)
+        popupPanelLabel.position = CGPoint(x: 0, y: 120)
+        popupPanelLabel.zPosition = 11
+        
+        new.name = "New"
+        new.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        new.position = CGPoint(x: -150, y: -50)
+        new.size = CGSize(width: 200, height: 200)
+        new.zPosition = 12
+        
+        quit.name = "Home"
+        quit.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        quit.position = CGPoint(x: 150, y: -50)
+        quit.size = CGSize(width: 200, height: 200)
+        quit.zPosition = 12
+        
+        popupPanel.addChild(popupPanelLabel)
+        popupPanel.addChild(new)
+        popupPanel.addChild(quit)
+        
+        self.addChild(popupPanel)
+    }
+    
+    func createGameOverPanel() {
+        self.scene?.isPaused = true
+        
+        popupPanel = SKSpriteNode(imageNamed: "Panel")
+        popupPanel.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        popupPanel.position = CGPoint(x: self.size.width/2, y: -self.size.height/2)
+        popupPanel.size = CGSize(width: 800, height: 500)
+        popupPanel.zPosition = 11
+        
+        let new = SKSpriteNode(imageNamed: "New Button")
+        let quit = SKSpriteNode(imageNamed: "Home Button")
+        
+        popupPanelLabel.name = "Game Over Label"
+        popupPanelLabel.fontName = "Helvetica"
+        popupPanelLabel.fontSize = 96
+        popupPanelLabel.text = "Game Over"
         popupPanelLabel.fontColor = UIColor(red: 153/255, green: 153/255, blue: 153/255, alpha: 1)
         popupPanelLabel.position = CGPoint(x: 0, y: 120)
         popupPanelLabel.zPosition = 11

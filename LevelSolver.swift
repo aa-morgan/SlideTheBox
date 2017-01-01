@@ -14,17 +14,17 @@ class LevelSolver {
     
     // Given a BasicLevel, run the main exploration algorithm and set the results
     func solve(level: Level) {
-        runExplorationAlgorithm(level: level, startPosition: level.getStartPosition())
+        runExplorationAlgorithm(level: level, startPosition: level.getStartPosition(), blockType: "player")
         setLevelProperties(level: level)
     }
     
     // Given a BasicLevel and a custom start position, return the next move
-    func solveForNextMove(level: Level, customStart: Array<Int>, customEnd: Array<Int>) -> (direction: String, notFound: Bool) {
+    func solveForNextMove(level: Level, customStart: Array<Int>, customEnd: Array<Int>, blockType: String) -> (direction: String, notFound: Bool) {
         var nextMove = String()
         var notFound = Bool()
         
         if !(customEnd == customStart) {
-            let calculatedRoute = customSolve(level: level, customStart: customStart)
+            let calculatedRoute = customSolve(level: level, customStart: customStart, blockType: blockType)
             (nextMove, notFound) = nextMoveFromRoute(calculatedRoute: calculatedRoute, startPosition: customStart, endPosition: customEnd)
             
             if notFound {
@@ -38,11 +38,11 @@ class LevelSolver {
     }
     
     // Given a BasicLevel and custom start location, return the respective calculatedRoute
-    func customSolve(level: Level, customStart: Array<Int>) -> Array<Array<Array<Array<Int>>>> {
+    func customSolve(level: Level, customStart: Array<Int>, blockType: String) -> Array<Array<Array<Array<Int>>>> {
         let copyOfBlocksExploration = level.getSolution().getBlocksExploration()
         let copyOfCalculatedRoute = level.getSolution().getCalculatedRoute()
         
-        runExplorationAlgorithm(level: level, startPosition: customStart)
+        runExplorationAlgorithm(level: level, startPosition: customStart, blockType: blockType)
         
         let customCalculatedRoute = level.getSolution().getCalculatedRoute()
         
@@ -78,7 +78,7 @@ class LevelSolver {
     }
     
     // Main exploration algorithm
-    func runExplorationAlgorithm(level: Level, startPosition: Array<Int>) {
+    func runExplorationAlgorithm(level: Level, startPosition: Array<Int>, blockType: String) {
         
         var currentExplorationStage = 1
         var numSpans = Int()
@@ -89,12 +89,12 @@ class LevelSolver {
         level.getSolution().setBlocksExplorationValue(position: startPosition, value: currentExplorationStage)
         
         repeat {
-            numSpans = searchSpanAndMark(level: level, currentExplorationStage: currentExplorationStage)
+            numSpans = searchSpanAndMark(level: level, currentExplorationStage: currentExplorationStage, blockType: blockType)
             currentExplorationStage += 1
         } while(numSpans > 0)
     }
     
-    func searchSpanAndMark(level: Level, currentExplorationStage: Int) -> Int {
+    func searchSpanAndMark(level: Level, currentExplorationStage: Int, blockType: String) -> Int {
         
         var numSpans = 0
         var positions = Array<Array<Int>>()
@@ -109,7 +109,7 @@ class LevelSolver {
                     if [col, row] != level.getEndPosition() {
                         numSpans += 1
                         for direction in directions {
-                            (positions, _, _, infiniteArrowLoop) = level.calculateMove(position: [col, row], direction: direction, blockType: "player")
+                            (positions, _, _, infiniteArrowLoop) = level.calculateMove(position: [col, row], direction: direction, blockType: blockType)
                             newPosition = positions.last!
                             if level.getSolution().getBlocksExplorationValue(position: newPosition) == 0 {
                                 level.getSolution().setBlocksExplorationValue(position: newPosition,
@@ -150,7 +150,7 @@ class LevelSolver {
         for curRow in copyOfBlocksExploration {
             for expStage in curRow {
                 if expStage >= 2 {
-                    runExplorationAlgorithm(level: level, startPosition: [col, row])
+                    runExplorationAlgorithm(level: level, startPosition: [col, row], blockType: "player")
                     if (checkSolvable(level: level) == false) {
                         level.getSolution().setBlocksExploration(blocks: copyOfBlocksExploration)
                         level.getSolution().setCalculatedRoute(calculatedRoute: copyOfCalculatedRoute)
@@ -237,5 +237,22 @@ class LevelSolver {
         }
         
         return direction
+    }
+    
+    func randomDirection() -> String {
+        let randInt = Int(arc4random_uniform(4))
+        
+        if (randInt == 0) {
+            return "down"
+        } else if (randInt == 1) {
+            return "up"
+        } else if (randInt == 2) {
+            return "right"
+        } else if (randInt == 3) {
+            return "left"
+        } else {
+            print("Error (in randomDirection)!")
+            return "none"
+        }
     }
 }
