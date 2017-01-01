@@ -13,6 +13,7 @@ class LevelGeneratorStatistics {
     var levelsProposed = Int()
     var levelsUnsolvable = Int()
     var levelsStuckable = Int()
+    var infiniteArrowLoop = Int()
     var levelsTooDifficult = Int()
     
     init() {
@@ -47,6 +48,14 @@ class LevelGeneratorStatistics {
     
     func incrementLevelsStuckable() {
         self.levelsStuckable += 1
+    }
+    
+    func getInfiniteArrowLoop() -> Int {
+        return self.infiniteArrowLoop
+    }
+    
+    func incrementInfiniteArrowLoop() {
+        self.infiniteArrowLoop += 1
     }
     
     func getLevelsTooDifficult() -> Int {

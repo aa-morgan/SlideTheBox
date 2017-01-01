@@ -72,7 +72,7 @@ class DifficultyCriteria {
     }
     
     func getMaxExplorationStage(level: Level) -> Int {
-        let (value, _) = level.twoDimMax(array: level.getBlocksExploration())
+        let (value, _) = level.twoDimMax(array: level.getSolution().getBlocksExploration())
         return value
     }
     
@@ -81,7 +81,7 @@ class DifficultyCriteria {
         
         var row = 0
         var col = 0
-        for curRow in level.getBlocksExploration() {
+        for curRow in level.getSolution().getBlocksExploration() {
             for stage in curRow {
                 
                 if (stage > 0) {

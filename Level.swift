@@ -9,10 +9,6 @@
 import SpriteKit
 
 class Level {
-    
-    var blocksReal = Array<Array<Int>>()
-    var blocksExploration = Array<Array<Int>>()
-    var calculatedRoute = Array<Array<Array<Array<Int>>>>()
 
     var numBlocksX = Int()
     var numBlocksY = Int()
@@ -24,9 +20,8 @@ class Level {
     var startPosition = Array<Int>()
     var endPosition = Array<Int>()
     
-    var solved = Bool()
-    var solvable = Bool()
-    var stuckable = Bool()
+    var blocksReal = Array<Array<Int>>()
+    var levelSolution = LevelSolution()
     
     init() {
     }
@@ -34,15 +29,13 @@ class Level {
     init(numBlocksX: Int, numBlocksY: Int) {
         self.numBlocksX = numBlocksX
         self.numBlocksY = numBlocksY
-        solved = false
         
         blocksReal = Array(repeating: Array(repeating: 0, count: numBlocksX), count: numBlocksY)
-        blocksExploration = Array(repeating: Array(repeating: 0, count: numBlocksX), count: numBlocksY)
-        calculatedRoute = Array(repeating: Array(repeating: Array<Array<Int>>(), count: numBlocksX), count: numBlocksY)
+        levelSolution = LevelSolution(numBlocksX: numBlocksX, numBlocksY: numBlocksY)
     }
     
     func calculateMove(position: Array<Int>, direction: String)
-        -> (positions: Array<Array<Int>>, numMoves: Array<Int>, endBlock: Bool, abort: Bool) {
+        -> (positions: Array<Array<Int>>, numMoves: Array<Int>, endBlock: Bool, infiniteArrowLoop: Bool) {
             
             var finished = false
             var col = position[0]
@@ -61,7 +54,7 @@ class Level {
             var updateDirection = String()
             var hitArrow = false
             var hitArrowNum = 0
-            var abort = false
+            var infiniteArrowLoop = false
             
             if (blocksReal[row][col] >= 11 && blocksReal[row][col] <= 18) { // Number block. No Number 0 block
                 hitNumber = true
@@ -122,14 +115,13 @@ class Level {
                 }
                 
                 if hitArrowNum > 10 {
-                    print("Error (in Level.calculateMove): An arrow has been hit more than 10 times within a single move. Infinity loop!")
-                    abort = true
+                    infiniteArrowLoop = true
                     break
                 }
                 
             } while(hitArrow)
             
-            return (positions: positions, numMoves: numMovesArray, endBlock: endBlock, abort: abort)
+            return (positions: positions, numMoves: numMovesArray, endBlock: endBlock, infiniteArrowLoop: infiniteArrowLoop)
     }
     
     func twoDimMax(array: Array<Array<Int>>) -> (value: Int, index: Array<Int>) {
@@ -189,28 +181,8 @@ class Level {
         return newPosition
     }
     
-    func isSolved() -> Bool {
-        return solved
-    }
-    
-    func setSolved(isSolved: Bool) {
-        self.solved = isSolved
-    }
-    
-    func isSolvable() -> Bool {
-        return solvable
-    }
-    
-    func setSolvable(isSolvable: Bool) {
-        self.solvable = isSolvable
-    }
-    
-    func isStuckable() -> Bool {
-        return stuckable
-    }
-    
-    func setStuckable(isStuckable: Bool) {
-        self.stuckable = isStuckable
+    func getSolution() -> LevelSolution {
+        return self.levelSolution
     }
     
     func getBlocksReal() -> Array<Array<Int>> {
@@ -223,42 +195,6 @@ class Level {
     
     func setBlocksReal(blocks: Array<Array<Int>>) {
         self.blocksReal = blocks
-    }
-    
-    func getBlocksExploration() -> Array<Array<Int>> {
-        return self.blocksExploration
-    }
-    
-    func getBlocksExplorationValue(position: Array<Int>) -> Int {
-        return self.blocksExploration[position[1]][position[0]]
-    }
-    
-    func setBlocksExploration(blocks: Array<Array<Int>>) {
-        self.blocksExploration = blocks
-    }
-    
-    func setBlocksExplorationValue(position: Array<Int>, value: Int) {
-        self.blocksExploration[position[1]][position[0]] = value
-    }
-    
-    func resetBlocksExploration() {
-        self.blocksExploration = Array(repeating: Array(repeating: 0, count: numBlocksX), count: numBlocksY)
-    }
-    
-    func getCalculatedRoute() -> Array<Array<Array<Array<Int>>>> {
-        return self.calculatedRoute
-    }
-    
-    func setCalculatedRoute(calculatedRoute: Array<Array<Array<Array<Int>>>>) {
-        self.calculatedRoute = calculatedRoute
-    }
-    
-    func setCalculatedRouteValue(position: Array<Int>, value: Array<Array<Int>>) {
-        self.calculatedRoute[position[1]][position[0]] = value
-    }
-    
-    func resetCalculatedRoute() {
-        self.calculatedRoute = Array(repeating: Array(repeating: Array<Array<Int>>(), count: numBlocksX), count: numBlocksY)
     }
     
     func getStartPosition() -> Array<Int> {
@@ -282,8 +218,8 @@ class Level {
     }
     
     func getMinMoves() -> Int {
-        if self.solved {
-            return getBlocksExplorationValue(position: getEndPosition()) - 1
+        if self.levelSolution.isSolved() {
+            return self.levelSolution.getBlocksExplorationValue(position: getEndPosition()) - 1
         } else {
             return -1
         }

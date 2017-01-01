@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F33387DA1E06065600FC9092 /* LevelGeneratorStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = F33387D91E06065600FC9092 /* LevelGeneratorStatistics.swift */; };
+		F34BAFC81E18831C00B15F34 /* LevelSolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = F34BAFC71E18831C00B15F34 /* LevelSolution.swift */; };
 		F3895D931E181478007180BF /* Level.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3895D921E181478007180BF /* Level.swift */; };
 		F3895D951E181480007180BF /* LevelProposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3895D941E181480007180BF /* LevelProposer.swift */; };
 		F3895D971E181487007180BF /* LevelSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3895D961E181487007180BF /* LevelSolver.swift */; };
@@ -46,6 +47,7 @@
 
 /* Begin PBXFileReference section */
 		F33387D91E06065600FC9092 /* LevelGeneratorStatistics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelGeneratorStatistics.swift; sourceTree = "<group>"; };
+		F34BAFC71E18831C00B15F34 /* LevelSolution.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelSolution.swift; sourceTree = "<group>"; };
 		F3895D921E181478007180BF /* Level.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Level.swift; sourceTree = "<group>"; };
 		F3895D941E181480007180BF /* LevelProposer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelProposer.swift; sourceTree = "<group>"; };
 		F3895D961E181487007180BF /* LevelSolver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelSolver.swift; sourceTree = "<group>"; };
@@ -168,6 +170,7 @@
 				F3895D921E181478007180BF /* Level.swift */,
 				F3895D941E181480007180BF /* LevelProposer.swift */,
 				F3895D961E181487007180BF /* LevelSolver.swift */,
+				F34BAFC71E18831C00B15F34 /* LevelSolution.swift */,
 				F3895D981E181499007180BF /* DifficultyCriteria.swift */,
 			);
 			name = "Level classes";
@@ -358,6 +361,7 @@
 				F3F929D51DF786320000FFB1 /* GameplayScene.swift in Sources */,
 				F3895D971E181487007180BF /* LevelSolver.swift in Sources */,
 				F3D2EA761DFDEDEE00FAE267 /* LevelGenerator.swift in Sources */,
+				F34BAFC81E18831C00B15F34 /* LevelSolution.swift in Sources */,
 				F3B4DF6E1DF4899700BA4725 /* GameViewController.swift in Sources */,
 				F33387DA1E06065600FC9092 /* LevelGeneratorStatistics.swift in Sources */,
 				F3F929D31DF7861F0000FFB1 /* MainMenuScene.swift in Sources */,

@@ -35,15 +35,15 @@ class LevelSolver {
     
     // Given a BasicLevel and custom start location, return the respective calculatedRoute
     func customSolve(level: Level, customStart: Array<Int>) -> Array<Array<Array<Array<Int>>>> {
-        let copyOfBlocksExploration = level.getBlocksExploration()
-        let copyOfCalculatedRoute = level.getCalculatedRoute()
+        let copyOfBlocksExploration = level.getSolution().getBlocksExploration()
+        let copyOfCalculatedRoute = level.getSolution().getCalculatedRoute()
         
         runExplorationAlgorithm(level: level, startPosition: customStart)
         
-        let customCalculatedRoute = level.getCalculatedRoute()
+        let customCalculatedRoute = level.getSolution().getCalculatedRoute()
         
-        level.setBlocksExploration(blocks: copyOfBlocksExploration)
-        level.setCalculatedRoute(calculatedRoute: copyOfCalculatedRoute)
+        level.getSolution().setBlocksExploration(blocks: copyOfBlocksExploration)
+        level.getSolution().setCalculatedRoute(calculatedRoute: copyOfCalculatedRoute)
         
         return customCalculatedRoute
     }
@@ -75,10 +75,10 @@ class LevelSolver {
         var currentExplorationStage = 1
         var numSpans = Int()
         
-        level.resetBlocksExploration()
-        level.resetCalculatedRoute()
+        level.getSolution().resetBlocksExploration()
+        level.getSolution().resetCalculatedRoute()
         
-        level.setBlocksExplorationValue(position: startPosition, value: currentExplorationStage)
+        level.getSolution().setBlocksExplorationValue(position: startPosition, value: currentExplorationStage)
         
         repeat {
             numSpans = searchSpanAndMark(level: level, currentExplorationStage: currentExplorationStage)
@@ -91,22 +91,25 @@ class LevelSolver {
         var numSpans = 0
         var positions = Array<Array<Int>>()
         var newPosition = Array<Int>()
-        var abort = false
+        var infiniteArrowLoop = false
         
         var row = 0
         var col = 0
-        for curRow in level.getBlocksExploration() {
+        for curRow in level.getSolution().getBlocksExploration() {
             for expStage in curRow {
                 if expStage == currentExplorationStage {
                     if [col, row] != level.getEndPosition() {
                         numSpans += 1
                         for direction in directions {
-                            (positions, _, _, abort) = level.calculateMove(position: [col, row], direction: direction)
+                            (positions, _, _, infiniteArrowLoop) = level.calculateMove(position: [col, row], direction: direction)
                             newPosition = positions.last!
-                            if level.getBlocksExplorationValue(position: newPosition) == 0 {
-                                level.setBlocksExplorationValue(position: newPosition,
+                            if level.getSolution().getBlocksExplorationValue(position: newPosition) == 0 {
+                                level.getSolution().setBlocksExplorationValue(position: newPosition,
                                                                 value: currentExplorationStage + 1)
-                                level.setCalculatedRouteValue(position: newPosition, value: positions)
+                                level.getSolution().setCalculatedRouteValue(position: newPosition, value: positions)
+                            }
+                            if infiniteArrowLoop {
+                                level.getSolution().setInfiniteArrowLoop(value: true)
                             }
                         }
                     }
@@ -122,7 +125,7 @@ class LevelSolver {
     
     func checkSolvable(level: Level) -> Bool {
         
-        if level.getBlocksExplorationValue(position: level.getEndPosition()) == 0 {
+        if level.getSolution().getBlocksExplorationValue(position: level.getEndPosition()) == 0 {
             return false
         } else {
             return true
@@ -131,8 +134,8 @@ class LevelSolver {
     }
     
     func checkStuckable(level: Level) -> Bool {
-        let copyOfBlocksExploration = level.getBlocksExploration()
-        let copyOfCalculatedRoute = level.getCalculatedRoute()
+        let copyOfBlocksExploration = level.getSolution().getBlocksExploration()
+        let copyOfCalculatedRoute = level.getSolution().getCalculatedRoute()
         
         var row = 0
         var col = 0
@@ -141,8 +144,8 @@ class LevelSolver {
                 if expStage >= 2 {
                     runExplorationAlgorithm(level: level, startPosition: [col, row])
                     if (checkSolvable(level: level) == false) {
-                        level.setBlocksExploration(blocks: copyOfBlocksExploration)
-                        level.setCalculatedRoute(calculatedRoute: copyOfCalculatedRoute)
+                        level.getSolution().setBlocksExploration(blocks: copyOfBlocksExploration)
+                        level.getSolution().setCalculatedRoute(calculatedRoute: copyOfCalculatedRoute)
                         return true
                     }
                 }
@@ -152,20 +155,20 @@ class LevelSolver {
             row += 1
         }
         
-        level.setBlocksExploration(blocks: copyOfBlocksExploration)
-        level.setCalculatedRoute(calculatedRoute: copyOfCalculatedRoute)
+        level.getSolution().setBlocksExploration(blocks: copyOfBlocksExploration)
+        level.getSolution().setCalculatedRoute(calculatedRoute: copyOfCalculatedRoute)
         return false
     }
     
     func setLevelProperties(level: Level) {
-        level.setSolvable(isSolvable: checkSolvable(level: level))
-        if (level.isSolvable()) {
-            level.setStuckable(isStuckable: checkStuckable(level: level))
+        level.getSolution().setSolvable(isSolvable: checkSolvable(level: level))
+        if (level.getSolution().isSolvable()) {
+            level.getSolution().setStuckable(isStuckable: checkStuckable(level: level))
             
         } else {
-            level.setStuckable(isStuckable: true)
+            level.getSolution().setStuckable(isStuckable: true)
         }
-        level.setSolved(isSolved: true)
+        level.getSolution().setSolved(isSolved: true)
     }
     
     func incrementPosition(position: Array<Int>, direction: String) -> Array<Int> {

@@ -82,7 +82,6 @@ class GameplayScene: SKScene {
             }
             
             if atPoint(location).name == "New" {
-                popupPanelLabel.text = "Loading..."
                 let gameplay = GameplayScene(fileNamed: "GameplayScene")
                 gameplay!.scaleMode = .aspectFill
                 self.view?.presentScene(gameplay!)
