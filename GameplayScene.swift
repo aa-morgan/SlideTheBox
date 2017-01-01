@@ -355,8 +355,21 @@ class GameplayScene: SKScene {
                     (enemyPositions, enemyNumMovesArray, _, _) = level.calculateMove(position: currentEnemyPositions[index], direction: enemyDirection, blockType: "enemy")
                     enemyNewPosition = enemyPositions.last!
                     
-                    currentEnemyPositions[index] = enemyNewPosition
-                    moveBlock(spriteNode: enemyBlock, type: "enemy", toPositions: enemyPositions, numBlocks: enemyNumMovesArray)
+                    // Loop through previous enemies
+                    var safeToMove = true
+                    for previousEnemyIndex in 0...index {
+                        if previousEnemyIndex != index {
+                            // Only allow move if new position does not land you on top of another enemy
+                            if enemyNewPosition == currentEnemyPositions[previousEnemyIndex] {
+                                safeToMove = false
+                            }
+                        }
+                    }
+                    
+                    if safeToMove {
+                        currentEnemyPositions[index] = enemyNewPosition
+                        moveBlock(spriteNode: enemyBlock, type: "enemy", toPositions: enemyPositions, numBlocks: enemyNumMovesArray)
+                    }
 
                     index += 1
                 }
