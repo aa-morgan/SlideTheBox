@@ -10,20 +10,26 @@ import Foundation
 
 class LevelGeneratorStatistics {
     
-    var levelsProposed = Int()
-    var levelsUnsolvable = Int()
-    var levelsStuckable = Int()
-    var infiniteArrowLoop = Int()
-    var levelsTooDifficult = Int()
+    var levelsProposed: Int
+    var levelsUnsolvable: Int
+    var levelsStuckable: Int
+    var infiniteArrowLoop: Int
+    var levelsTooDifficult: Int
     
     init() {
-        reset()
+        levelsProposed = 0
+        levelsUnsolvable = 0
+        levelsStuckable = 0
+        infiniteArrowLoop = 0
+        levelsTooDifficult = 0
     }
     
     func reset() {
         levelsProposed = 0
         levelsUnsolvable = 0
         levelsStuckable = 0
+        infiniteArrowLoop = 0
+        levelsTooDifficult = 0
     }
     
     func getLevelsProposed() -> Int {

@@ -23,7 +23,7 @@ class GameplayScene: SKScene {
     var playerBlock = SKSpriteNode()
     var endBlock = SKSpriteNode()
     var enemyBlocks = Array<SKSpriteNode>()
-    let numOfEnemies = 2
+    let numOfEnemies = 4
     
     var level = Level()
     var levelGenerator = LevelGenerator()
@@ -200,7 +200,7 @@ class GameplayScene: SKScene {
     
         for index in 1...numOfEnemies {
             
-            let explorablePosition = level.getSolution().getExplorablePosition(greaterThan: level.getMinMoves()-1, level: level, seed: index)
+            let explorablePosition = level.getSolution().getExplorablePosition(greaterThan: 1, level: level, seed: index)
             let columnIndex = explorablePosition[0]
             let rowIndex = explorablePosition[1]
             
@@ -306,37 +306,43 @@ class GameplayScene: SKScene {
     func handleMove(direction: String) {
         
         if (!playerIsMoving && enemiesMoving == 0 && !levelPaused && !levelComplete && !levelLost) {
-            var positions = Array<Array<Int>>()
-            var newPosition = Array<Int>()
-            var numMovesArray = Array<Int>()
+            var playerRoutePositions: Array<Array<Int>>
+            var proposedPlayerPosition: Array<Int>
+            var playerNumMovesArray: Array<Int>
             curNumMoves += 1
             curMovesIndicator.text = String(curNumMoves)
             
-            (positions, numMovesArray, levelComplete, _) = level.calculateMove(position: currentPlayerPosition, direction: direction, blockType: "player")
-            newPosition = positions.last!
+            (playerRoutePositions, playerNumMovesArray, levelComplete, _) = level.calculateMove(position: currentPlayerPosition, direction: direction, blockType: "player")
+            proposedPlayerPosition = playerRoutePositions.last!
             
-            currentPlayerPosition = newPosition
-            moveBlock(spriteNode: playerBlock, type: "player", toPositions: positions, numBlocks: numMovesArray)
+            currentPlayerPosition = proposedPlayerPosition
+            moveBlock(spriteNode: playerBlock, type: "player", toPositions: playerRoutePositions, numBlocks: playerNumMovesArray)
             
             if useEnemies {
-                var enemyPositions = Array<Array<Int>>()
-                var enemyNewPosition = Array<Int>()
+                var enemyRoutePositions = Array<Array<Int>>()
+                var enemiesRoutePositions = Array<Array<Array<Int>>>()
+                var proposedEnemyPositions = Array<Array<Int>>()
                 var enemyNumMovesArray = Array<Int>()
+                var enemiesNumMovesArray = Array<Array<Int>>()
+                var hasEnemyMoved = Array<Bool>(repeating: false, count: numOfEnemies)
+                var enemyMovingRandomly = Array<Bool>(repeating: false, count: numOfEnemies)
 
-                var index = 0
-                for enemyBlock in enemyBlocks {
+                for index in 0...(numOfEnemies-1) {
                     
                     var notFound = false
                     var enemyDirection = "none"
                     
+                    // Get individual enemy ideal directions
                     // Try to move to players new position
                     if (currentEnemyPositions[index] != currentPlayerPosition) {
                         (enemyDirection, notFound) = levelGenerator.getSolver().solveForNextMove(level: level, customStart: currentEnemyPositions[index], customEnd: currentPlayerPosition, blockType: "enemy")
+                        enemyMovingRandomly[index] = false
                     }
                     
                     // If the enemy is already at that position, then try the players previous position
                     else if (currentEnemyPositions[index] != previousPlayerPosition) {
                         (enemyDirection, notFound) = levelGenerator.getSolver().solveForNextMove(level: level, customStart: currentEnemyPositions[index], customEnd: previousPlayerPosition, blockType: "enemy")
+                        enemyMovingRandomly[index] = false
                     }
                     
                     // If the enemy cannot access either current or previous position, then move in random direction.
@@ -344,45 +350,61 @@ class GameplayScene: SKScene {
                         var enemyMoved = false
                         repeat {
                             enemyDirection = levelGenerator.getSolver().randomDirection()
-                            (enemyPositions, enemyNumMovesArray, _, _) = level.calculateMove(position: currentEnemyPositions[index], direction: enemyDirection, blockType: "enemy")
-                            if enemyPositions.first! != enemyPositions.last! {
+                            (enemyRoutePositions, enemyNumMovesArray, _, _) = level.calculateMove(position: currentEnemyPositions[index], direction: enemyDirection, blockType: "enemy")
+                            if enemyRoutePositions.first! != enemyRoutePositions.last! {
                                 enemyMoved = true
                             }
                         } while(!enemyMoved)
+                        enemyMovingRandomly[index] = true
+                    }
+                    
+                    // Store the proposed new positions and routes of the enemies
+                    (enemyRoutePositions, enemyNumMovesArray, _, _) = level.calculateMove(position: currentEnemyPositions[index], direction: enemyDirection, blockType: "enemy")
+                    proposedEnemyPositions.append(enemyRoutePositions.last!)
+                    enemiesRoutePositions.append(enemyRoutePositions)
+                    enemiesNumMovesArray.append(enemyNumMovesArray)
+
+                }
+                
+                // On each loop attempt to move an enemy to an empty position. Loop through numOfEnemies times to allow each enemy to move into a position made available by another enemy moving.
+                var safeToMove: Bool
+                for _ in 0...(numOfEnemies-1) {
+                    for currentEnemyIndex in 0...(numOfEnemies-1) {
+                        // Loop through previous enemies
+                        safeToMove = true
+                        for otherEnemyIndex in 0...(numOfEnemies-1) {
+                            if otherEnemyIndex != currentEnemyIndex {
+                                // Only allow move if new position does not land you on top of another enemy
+                                if proposedEnemyPositions[currentEnemyIndex] == currentEnemyPositions[otherEnemyIndex] {
+                                    safeToMove = false
+                                    break
+                                }
+                            }
+                        }
+                        
+                        if safeToMove {
+                            currentEnemyPositions[currentEnemyIndex] = proposedEnemyPositions[currentEnemyIndex]
+                            moveBlock(spriteNode: enemyBlocks[currentEnemyIndex], type: "enemy", toPositions: enemiesRoutePositions[currentEnemyIndex], numBlocks: enemiesNumMovesArray[currentEnemyIndex])
+                            hasEnemyMoved[currentEnemyIndex] = true
+                        }
                         
                     }
                     
-                    (enemyPositions, enemyNumMovesArray, _, _) = level.calculateMove(position: currentEnemyPositions[index], direction: enemyDirection, blockType: "enemy")
-                    enemyNewPosition = enemyPositions.last!
-                    
-                    // Loop through previous enemies
-                    var safeToMove = true
-                    for previousEnemyIndex in 0...index {
-                        if previousEnemyIndex != index {
-                            // Only allow move if new position does not land you on top of another enemy
-                            if enemyNewPosition == currentEnemyPositions[previousEnemyIndex] {
-                                safeToMove = false
-                            }
-                        }
+                    if allEqualTo(array: hasEnemyMoved, value: true) {
+                        break
                     }
-                    
-                    if safeToMove {
-                        currentEnemyPositions[index] = enemyNewPosition
-                        moveBlock(spriteNode: enemyBlock, type: "enemy", toPositions: enemyPositions, numBlocks: enemyNumMovesArray)
-                    }
-
-                    index += 1
                 }
                 
+                for currentEnemyPosition in currentEnemyPositions {
+                    if currentEnemyPosition == currentPlayerPosition {
+                        levelLost = true
+                    }
+                }
+            
             }
             
             previousPlayerPosition = currentPlayerPosition
-            
-            for currentEnemyPosition in currentEnemyPositions {
-                if currentEnemyPosition == currentPlayerPosition {
-                    levelLost = true
-                }
-            }
+        
         }
     }
     
@@ -564,6 +586,17 @@ class GameplayScene: SKScene {
         popupPanel.addChild(quit)
         
         self.addChild(popupPanel)
+    }
+    
+    func allEqualTo(array: Array<Bool>, value: Bool) -> Bool {
+        
+        for mBool in array {
+            if mBool != value {
+                return false
+            }
+        }
+        
+        return true
     }
 
 }

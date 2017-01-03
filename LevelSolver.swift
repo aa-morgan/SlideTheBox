@@ -81,7 +81,7 @@ class LevelSolver {
     func runExplorationAlgorithm(level: Level, startPosition: Array<Int>, blockType: String) {
         
         var currentExplorationStage = 1
-        var numSpans = Int()
+        var numSpans: Int
         
         level.getSolution().resetBlocksExploration()
         level.getSolution().resetCalculatedRoute()
@@ -97,8 +97,8 @@ class LevelSolver {
     func searchSpanAndMark(level: Level, currentExplorationStage: Int, blockType: String) -> Int {
         
         var numSpans = 0
-        var positions = Array<Array<Int>>()
-        var newPosition = Array<Int>()
+        var positions: Array<Array<Int>>
+        var newPosition: Array<Int>
         var infiniteArrowLoop = false
         
         var row = 0

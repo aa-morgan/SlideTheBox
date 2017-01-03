@@ -48,9 +48,9 @@ class LevelGenerator {
     
     func generate() -> Level {
         
-        var levelSolvable = Bool()
-        var levelStuckable = Bool()
-        var infiniteArrowLoop = Bool()
+        var levelSolvable: Bool
+        var levelStuckable: Bool
+        var infiniteArrowLoop: Bool
         
         if testingStage == "all" {
             repeat {
