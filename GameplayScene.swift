@@ -23,16 +23,13 @@ class GameplayScene: SKScene {
     var playerBlock = SKSpriteNode()
     var endBlock = SKSpriteNode()
     var enemyBlocks = Array<SKSpriteNode>()
-    let numOfEnemies = 4
     
     var level = Level()
     var levelGenerator = LevelGenerator()
-    let numbersKey = "Use Numbers"
-    let arrowsKey = "Use Arrows"
-    let enemiesKey = "Use Enemies"
-    var useNumbers = Bool()
-    var useArrows = Bool()
+    let enemiesToggleKey = "Use Enemies"
     var useEnemies = Bool()
+    let enemiesSelectorKey = "Number of Enemies"
+    var numOfEnemies = Int()
     
     var numBlocksX = Int(16)
     var numBlocksY = Int(8)
@@ -100,23 +97,22 @@ class GameplayScene: SKScene {
     }
     
     func initialise() {
-        setupUsefulConstants()
+        setupSimpleVariables()
         setupMenuBar()
         setupLevel()
         setupGestures()
     }
     
-    func setupUsefulConstants() {
+    func setupSimpleVariables() {
         
         let playableWidth = self.size.width
         let playableHeight = self.size.height - menuBarHeight
         
         blockWidth = playableWidth / CGFloat(numBlocksX)
         blockHeight = playableHeight / CGFloat(numBlocksY)
-        
-        useNumbers = UserDefaults.standard.bool(forKey: numbersKey)
-        useArrows = UserDefaults.standard.bool(forKey: arrowsKey)
-        useEnemies = UserDefaults.standard.bool(forKey: enemiesKey)
+
+        useEnemies = UserDefaults.standard.bool(forKey: enemiesToggleKey)
+        numOfEnemies = UserDefaults.standard.integer(forKey: enemiesSelectorKey)
     
     }
     
@@ -132,7 +128,7 @@ class GameplayScene: SKScene {
     }
     
     func setupLevel() {
-        levelGenerator = LevelGenerator(numBlocksX: numBlocksX, numBlocksY: numBlocksY, useNumbers: useNumbers, useArrows: useArrows)
+        levelGenerator = LevelGenerator(numBlocksX: numBlocksX, numBlocksY: numBlocksY)
         level = levelGenerator.generate()
         currentPlayerPosition = level.getStartPosition()
         

@@ -21,6 +21,13 @@ class LevelGenerator {
     
     var useNumbers = Bool()
     var useArrows = Bool()
+    let numbersToggleKey = "Use Numbers"
+    let arrowsToggleKey = "Use Arrows"
+    
+    let numOfNumbers = Int()
+    let numOfArrows = Int()
+    let numbersSelectorKey = "Number of Numbers"
+    let arrowsSelectorKey = "Number of Arrows"
     
     let testingStage = "all"
     
@@ -33,11 +40,11 @@ class LevelGenerator {
         self.genStats = LevelGeneratorStatistics()
     }
     
-    init(numBlocksX: Int, numBlocksY: Int, useNumbers: Bool, useArrows: Bool) {
+    init(numBlocksX: Int, numBlocksY: Int) {
         self.numBlocksX = numBlocksX
         self.numBlocksY = numBlocksY
-        self.useNumbers = useNumbers
-        self.useArrows = useArrows
+        self.useNumbers = UserDefaults.standard.bool(forKey: numbersToggleKey)
+        self.useArrows = UserDefaults.standard.bool(forKey: arrowsToggleKey)
         
         self.level = Level()
         self.levelProposer = LevelProposer(numBlocksX: numBlocksX, numBlocksY: numBlocksY)

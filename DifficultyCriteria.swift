@@ -25,7 +25,7 @@ class DifficultyCriteria {
     init(difficulty: String) {
         
         if difficulty == "easy" {
-            self.minMoves = Int(5)
+            self.minMoves = Int(6)
             self.percentOfBlockBlocks = Float(0.25)
         } else if difficulty == "medium" {
             self.minMoves = Int(8)

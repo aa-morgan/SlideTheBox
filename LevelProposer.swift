@@ -13,6 +13,9 @@ class LevelProposer {
     var numBlocksX = Int()
     var numBlocksY = Int()
     
+    let numbersSelectorKey = "Number of Numbers"
+    let arrowsSelectorKey = "Number of Arrows"
+    
     var blocksReal = Array<Array<Int>>()
     
     init() {
@@ -181,18 +184,17 @@ class LevelProposer {
     
     func generateNumNumberBlocks(difficulty: DifficultyCriteria) -> Int {
         
-        let maxNumNumberBlocks = 4
-        let levelNumBlocks = Int(arc4random_uniform(UInt32(maxNumNumberBlocks))+1)
+        return UserDefaults.standard.integer(forKey: numbersSelectorKey)
         
-        return levelNumBlocks
+//        let maxNumNumberBlocks = 4
+//        let levelNumBlocks = Int(arc4random_uniform(UInt32(maxNumNumberBlocks))+1)
+//        
+//        return levelNumBlocks
     }
     
     func generateNumArrowBlocks(difficulty: DifficultyCriteria) -> Int {
         
-        let maxNumArrowBlocks = 4
-        let levelNumBlocks = Int(arc4random_uniform(UInt32(maxNumArrowBlocks))+1)
-        
-        return levelNumBlocks
+        return UserDefaults.standard.integer(forKey: arrowsSelectorKey)
     }
     
 }
