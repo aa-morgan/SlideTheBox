@@ -31,6 +31,10 @@ class GameplayScene: SKScene {
     let enemiesSelectorKey = "Number of Enemies"
     var numOfEnemies = Int()
     
+    let levelsAttemptedKey = "Level Attempted"
+    let levelsCompletedKey = "Level Completed"
+    let levelsLostKey = "Level Lost"
+    
     var numBlocksX = Int(16)
     var numBlocksY = Int(8)
     var blockWidth = CGFloat()
@@ -113,6 +117,8 @@ class GameplayScene: SKScene {
 
         useEnemies = UserDefaults.standard.bool(forKey: enemiesToggleKey)
         numOfEnemies = UserDefaults.standard.integer(forKey: enemiesSelectorKey)
+        
+        UserDefaults.standard.set(UserDefaults.standard.integer(forKey: levelsAttemptedKey)+1, forKey: levelsAttemptedKey)
     
     }
     
@@ -509,6 +515,8 @@ class GameplayScene: SKScene {
     func createLevelCompletePanel() {
         self.scene?.isPaused = true
         
+        UserDefaults.standard.set(UserDefaults.standard.integer(forKey: levelsCompletedKey)+1, forKey: levelsCompletedKey)
+        
         popupPanel = SKSpriteNode(imageNamed: "Panel")
         popupPanel.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         popupPanel.position = CGPoint(x: self.size.width/2, y: -self.size.height/2)
@@ -547,6 +555,8 @@ class GameplayScene: SKScene {
     
     func createGameOverPanel() {
         self.scene?.isPaused = true
+        
+        UserDefaults.standard.set(UserDefaults.standard.integer(forKey: levelsLostKey)+1, forKey: levelsLostKey)
         
         popupPanel = SKSpriteNode(imageNamed: "Panel")
         popupPanel.anchorPoint = CGPoint(x: 0.5, y: 0.5)
