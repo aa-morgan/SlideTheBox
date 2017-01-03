@@ -44,10 +44,6 @@ class SettingsScene : SKScene {
         setupSelectors()
     }
     
-    override func update(_ currentTime: TimeInterval) {
-        
-    }
-    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
         for touch in touches {

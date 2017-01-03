@@ -12,7 +12,7 @@ class MainMenuScene: SKScene {
     
     var playBtn = SKSpriteNode()
     var settingsBtn = SKSpriteNode()
-    var scoreBtn = SKSpriteNode()
+    var statsBtn = SKSpriteNode()
     
     var title = SKLabelNode()
     var score = SKLabelNode()
@@ -44,8 +44,10 @@ class MainMenuScene: SKScene {
                 self.view?.presentScene(settingsScene!)
             }
             
-            if atPoint(location) == scoreBtn {
-                showScore()
+            if atPoint(location) == statsBtn {
+                let statsScene = StatsScene(fileNamed: "StatsScene")
+                statsScene!.scaleMode = .aspectFill
+                self.view?.presentScene(statsScene!)
             }
             
         }
@@ -59,7 +61,7 @@ class MainMenuScene: SKScene {
     
     func getButtons() {
         playBtn = self.childNode(withName: "Play Button") as! SKSpriteNode
-        scoreBtn = self.childNode(withName: "Score Button") as! SKSpriteNode
+        statsBtn = self.childNode(withName: "Stats Button") as! SKSpriteNode
         settingsBtn = self.childNode(withName: "Settings Button") as! SKSpriteNode
     }
     
@@ -78,20 +80,6 @@ class MainMenuScene: SKScene {
         let sequence = SKAction.sequence([moveUp, moveDown])
         
         title.run(SKAction.repeatForever(sequence))
-    }
-    
-        
-    func showScore() {
-        score.removeFromParent()
-        
-        score = SKLabelNode(fontNamed: "Helvetica")
-        score.fontSize = 120
-        score.fontColor = UIColor(red: 153/255, green: 153/255, blue: 153/255, alpha: 1)
-        score.text = "\(UserDefaults.standard.integer(forKey: "Highscore"))"
-        score.position = CGPoint(x: 0, y: -300)
-        score.zPosition = 6
-        
-        self.addChild(score)
     }
     
 }
