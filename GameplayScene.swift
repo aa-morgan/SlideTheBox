@@ -198,11 +198,11 @@ class GameplayScene: SKScene {
     
     func setupEnemyBlocks(level: Level) {
     
-        for index in 1...numOfEnemies {
+        for _ in 1...numOfEnemies {
             
-            let explorablePosition = level.getSolution().getExplorablePosition(greaterThan: 1, level: level, seed: index)
-            let columnIndex = explorablePosition[0]
-            let rowIndex = explorablePosition[1]
+            let enemyPosition = level.getSolution().randomEnemyPosition(notIn: currentEnemyPositions, level: level)
+            let columnIndex = enemyPosition[0]
+            let rowIndex = enemyPosition[1]
             
             let enemyBlock = SKSpriteNode(imageNamed: "Enemy Block")
             enemyBlock.size = CGSize(width: blockWidth, height: blockHeight)
@@ -212,7 +212,7 @@ class GameplayScene: SKScene {
             enemyBlock.zPosition = 7
             
             enemyBlocks.append(enemyBlock)
-            currentEnemyPositions.append(explorablePosition)
+            currentEnemyPositions.append(enemyPosition)
             self.addChild(enemyBlock)
         }
 

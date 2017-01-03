@@ -42,18 +42,32 @@ class LevelSolution {
         calculatedRoute = Array(repeating: Array(repeating: Array<Array<Int>>(), count: numBlocksX), count: numBlocksY)
     }
     
-    func getExplorablePosition(greaterThan: Int, level: Level, seed: Int) -> Array<Int> {
+    func randomEnemyPosition(notIn: Array<Array<Int>>, level: Level) -> Array<Int> {
         
+        var potentialPositions: Array<Array<Int>>
+        var (minExpStage, _) = level.twoDimMax(array: getBlocksExploration())
+        
+        repeat {
+            potentialPositions = getPotentialEnemyPositions(array: level.getSolution().getBlocksExploration(), greaterThan: minExpStage, level: level)
+            
+            potentialPositions = removeFromArray(array: potentialPositions, remove: notIn)
+            
+            minExpStage -= 1
+        } while (potentialPositions.count == 0)
+        
+        let randomPositionIndex = Int(arc4random_uniform(UInt32(potentialPositions.count)))
+        
+        return potentialPositions[randomPositionIndex]
+    }
+    
+    func getPotentialEnemyPositions(array: Array<Array<Int>>, greaterThan: Int, level: Level) -> Array<Array<Int>> {
+        var potentialPositions = Array<Array<Int>>()
         var row = 0
         var col = 0
-        var numFound = 0
         for curRow in getBlocksExploration() {
             for expStage in curRow {
                 if (expStage > greaterThan) && (level.getBlocksRealValue(position: [col, row]) == 0) {
-                    numFound += 1
-                    if numFound == seed {
-                        return [col, row]
-                    }
+                    potentialPositions.append([col, row])
                 }
                 col += 1
             }
@@ -61,8 +75,27 @@ class LevelSolution {
             row += 1
         }
         
-        print("Error (in LevelSolution.getExplorablePosition): Couldn't find suitable position!")
-        return [0, 0]
+        return potentialPositions
+    }
+    
+    func removeFromArray(array: Array<Array<Int>>, remove: Array<Array<Int>>) -> Array<Array<Int>> {
+        var potentialPositions = Array<Array<Int>>()
+        var found: Bool
+        
+        for position in array {
+            found = false
+            for toRemove in remove {
+                if position == toRemove {
+                    found = true
+                    break
+                }
+            }
+            if !found {
+                potentialPositions.append(position)
+            }
+        }
+        
+        return potentialPositions
     }
     
     func isSolved() -> Bool {
