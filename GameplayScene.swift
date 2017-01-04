@@ -14,17 +14,17 @@ class GameplayScene: SKScene {
     var hintBtn = SKSpriteNode()
     var minMovesIndicator = SKLabelNode()
     var curMovesIndicator = SKLabelNode()
-    var homeBtn = SKSpriteNode()
-    var resumeBtn = SKSpriteNode()
-    var newLevelBtn = SKSpriteNode()
+    
     var popupPanel = SKSpriteNode()
     var popupPanelLabel = SKLabelNode()
     
     var playerBlock = SKSpriteNode()
     var endBlock = SKSpriteNode()
     var enemyBlocks = Array<SKSpriteNode>()
+    var levelCanvas = SKSpriteNode()
     
     var level = Level()
+    var levelCopy = Level()
     var levelGenerator = LevelGenerator()
     let enemiesToggleKey = "Use Enemies"
     var useEnemies = Bool()
@@ -92,6 +92,13 @@ class GameplayScene: SKScene {
                 levelPaused = false
             }
             
+            if atPoint(location).name == "Reset" {
+                resetLevel()
+                popupPanel.removeFromParent()
+                self.scene?.isPaused = false
+                levelPaused = false
+            }
+            
             if atPoint(location).name == "New" {
                 let gameplay = GameplayScene(fileNamed: "GameplayScene")
                 gameplay!.scaleMode = .aspectFill
@@ -136,12 +143,19 @@ class GameplayScene: SKScene {
     func setupLevel() {
         levelGenerator = LevelGenerator(numBlocksX: numBlocksX, numBlocksY: numBlocksY)
         level = levelGenerator.generate()
+        levelCopy = level.copy()
+        loadLevel()
+    }
+    
+    func loadLevel() {
         currentPlayerPosition = level.getStartPosition()
         
         playerIsMoving = false
         levelPaused = false
         levelComplete = false
         levelLost = false
+        
+        levelCanvas = SKSpriteNode()
         
         var rowIndex = 0
         var columnIndex = 0
@@ -165,15 +179,23 @@ class GameplayScene: SKScene {
             rowIndex += 1
         }
         
-        if useEnemies {
+        if useEnemies && numOfEnemies > 0 {
             setupEnemyBlocks(level: level)
         }
+        
+        self.addChild(levelCanvas)
         
         curNumMoves = 0
         minMovesIndicator.text = String(level.getMinMoves())
         curMovesIndicator.text = String(curNumMoves)
         
         previousPlayerPosition = level.getStartPosition()
+    }
+    
+    func resetLevel() {
+        levelCanvas.removeFromParent()
+        level = levelCopy.copy()
+        loadLevel()
     }
     
     func setupPlayerBox(columnIndex: Int, rowIndex: Int) {
@@ -184,7 +206,7 @@ class GameplayScene: SKScene {
         playerBlock.position = CGPoint(x: CGFloat(columnIndex) * blockWidth, y: -(CGFloat(rowIndex) * blockHeight))
         playerBlock.zPosition = 6
         
-        self.addChild(playerBlock)
+        levelCanvas.addChild(playerBlock)
     }
     
     func setupEndBlock(columnIndex: Int, rowIndex: Int) {
@@ -195,29 +217,7 @@ class GameplayScene: SKScene {
         endBlock.position = CGPoint(x: CGFloat(columnIndex) * blockWidth, y: -(CGFloat(rowIndex) * blockHeight))
         endBlock.zPosition = 5
         
-        self.addChild(endBlock)
-    }
-    
-    func setupEnemyBlocks(level: Level) {
-    
-        for _ in 1...numOfEnemies {
-            
-            let enemyPosition = level.getSolution().randomEnemyPosition(notIn: currentEnemyPositions, level: level)
-            let columnIndex = enemyPosition[0]
-            let rowIndex = enemyPosition[1]
-            
-            let enemyBlock = SKSpriteNode(imageNamed: "Enemy Block")
-            enemyBlock.size = CGSize(width: blockWidth, height: blockHeight)
-            enemyBlock.anchorPoint = CGPoint(x: 0, y: 1)
-            enemyBlock.name = "Enemy Block"
-            enemyBlock.position = CGPoint(x: CGFloat(columnIndex) * blockWidth, y: -(CGFloat(rowIndex) * blockHeight))
-            enemyBlock.zPosition = 7
-            
-            enemyBlocks.append(enemyBlock)
-            currentEnemyPositions.append(enemyPosition)
-            self.addChild(enemyBlock)
-        }
-
+        levelCanvas.addChild(endBlock)
     }
     
     func addBlockBlock(columnIndex: Int, rowIndex: Int) {
@@ -227,7 +227,7 @@ class GameplayScene: SKScene {
         blockBlockSprite.name = "Block Block"
         blockBlockSprite.position = CGPoint(x: CGFloat(columnIndex) * blockWidth, y: -(CGFloat(rowIndex) * blockHeight))
         blockBlockSprite.zPosition = 5
-        self.addChild(blockBlockSprite)
+        levelCanvas.addChild(blockBlockSprite)
     }
     
     func addNumberBlock(columnIndex: Int, rowIndex: Int, blockType: Int) {
@@ -239,7 +239,7 @@ class GameplayScene: SKScene {
         numberBlockSprite.name = "Number Block"
         numberBlockSprite.position = CGPoint(x: CGFloat(columnIndex) * blockWidth, y: -(CGFloat(rowIndex) * blockHeight))
         numberBlockSprite.zPosition = 5
-        self.addChild(numberBlockSprite)
+        levelCanvas.addChild(numberBlockSprite)
     }
 
     func addArrowBlock(columnIndex: Int, rowIndex: Int, blockType: Int) {
@@ -263,7 +263,33 @@ class GameplayScene: SKScene {
         arrowBlockSprite.name = "Arrow Block"
         arrowBlockSprite.position = CGPoint(x: CGFloat(columnIndex) * blockWidth, y: -(CGFloat(rowIndex) * blockHeight))
         arrowBlockSprite.zPosition = 5
-        self.addChild(arrowBlockSprite)
+        levelCanvas.addChild(arrowBlockSprite)
+    }
+    
+    func setupEnemyBlocks(level: Level) {
+        
+        // Reset
+        enemyBlocks = Array<SKSpriteNode>()
+        currentEnemyPositions = Array<Array<Int>>()
+        
+        for _ in 1...numOfEnemies {
+            
+            let enemyPosition = level.getSolution().randomEnemyPosition(notIn: currentEnemyPositions, level: level)
+            let columnIndex = enemyPosition[0]
+            let rowIndex = enemyPosition[1]
+            
+            let enemyBlock = SKSpriteNode(imageNamed: "Enemy Block")
+            enemyBlock.size = CGSize(width: blockWidth, height: blockHeight)
+            enemyBlock.anchorPoint = CGPoint(x: 0, y: 1)
+            enemyBlock.name = "Enemy Block"
+            enemyBlock.position = CGPoint(x: CGFloat(columnIndex) * blockWidth, y: -(CGFloat(rowIndex) * blockHeight))
+            enemyBlock.zPosition = 7
+            
+            enemyBlocks.append(enemyBlock)
+            currentEnemyPositions.append(enemyPosition)
+            levelCanvas.addChild(enemyBlock)
+        }
+        
     }
     
     func setupGestures() {
@@ -311,101 +337,105 @@ class GameplayScene: SKScene {
             var playerRoutePositions: Array<Array<Int>>
             var proposedPlayerPosition: Array<Int>
             var playerNumMovesArray: Array<Int>
-            curNumMoves += 1
-            curMovesIndicator.text = String(curNumMoves)
             
             (playerRoutePositions, playerNumMovesArray, levelComplete, _) = level.calculateMove(position: currentPlayerPosition, direction: direction, blockType: "player")
             proposedPlayerPosition = playerRoutePositions.last!
             
-            currentPlayerPosition = proposedPlayerPosition
-            moveBlock(spriteNode: playerBlock, type: "player", toPositions: playerRoutePositions, numBlocks: playerNumMovesArray)
-            
-            if useEnemies {
-                var enemyRoutePositions = Array<Array<Int>>()
-                var enemiesRoutePositions = Array<Array<Array<Int>>>()
-                var proposedEnemyPositions = Array<Array<Int>>()
-                var enemyNumMovesArray = Array<Int>()
-                var enemiesNumMovesArray = Array<Array<Int>>()
-                var hasEnemyMoved = Array<Bool>(repeating: false, count: numOfEnemies)
-                var enemyMovingRandomly = Array<Bool>(repeating: false, count: numOfEnemies)
-
-                for index in 0...(numOfEnemies-1) {
-                    
-                    var notFound = false
-                    var enemyDirection = "none"
-                    
-                    // Get individual enemy ideal directions
-                    // Try to move to players new position
-                    if (currentEnemyPositions[index] != currentPlayerPosition) {
-                        (enemyDirection, notFound) = levelGenerator.getSolver().solveForNextMove(level: level, customStart: currentEnemyPositions[index], customEnd: currentPlayerPosition, blockType: "enemy")
-                        enemyMovingRandomly[index] = false
-                    }
-                    
-                    // If the enemy is already at that position, then try the players previous position
-                    else if (currentEnemyPositions[index] != previousPlayerPosition) {
-                        (enemyDirection, notFound) = levelGenerator.getSolver().solveForNextMove(level: level, customStart: currentEnemyPositions[index], customEnd: previousPlayerPosition, blockType: "enemy")
-                        enemyMovingRandomly[index] = false
-                    }
-                    
-                    // If the enemy cannot access either current or previous position, then move in random direction.
-                    if notFound {
-                        var enemyMoved = false
-                        repeat {
-                            enemyDirection = levelGenerator.getSolver().randomDirection()
-                            (enemyRoutePositions, enemyNumMovesArray, _, _) = level.calculateMove(position: currentEnemyPositions[index], direction: enemyDirection, blockType: "enemy")
-                            if enemyRoutePositions.first! != enemyRoutePositions.last! {
-                                enemyMoved = true
-                            }
-                        } while(!enemyMoved)
-                        enemyMovingRandomly[index] = true
-                    }
-                    
-                    // Store the proposed new positions and routes of the enemies
-                    (enemyRoutePositions, enemyNumMovesArray, _, _) = level.calculateMove(position: currentEnemyPositions[index], direction: enemyDirection, blockType: "enemy")
-                    proposedEnemyPositions.append(enemyRoutePositions.last!)
-                    enemiesRoutePositions.append(enemyRoutePositions)
-                    enemiesNumMovesArray.append(enemyNumMovesArray)
-
-                }
+            if playerNumMovesArray[0] > 0 {
                 
-                // On each loop attempt to move an enemy to an empty position. Loop through numOfEnemies times to allow each enemy to move into a position made available by another enemy moving.
-                var safeToMove: Bool
-                for _ in 0...(numOfEnemies-1) {
-                    for currentEnemyIndex in 0...(numOfEnemies-1) {
-                        // Loop through previous enemies
-                        safeToMove = true
-                        for otherEnemyIndex in 0...(numOfEnemies-1) {
-                            if otherEnemyIndex != currentEnemyIndex {
-                                // Only allow move if new position does not land you on top of another enemy
-                                if proposedEnemyPositions[currentEnemyIndex] == currentEnemyPositions[otherEnemyIndex] {
-                                    safeToMove = false
-                                    break
+                curNumMoves += 1
+                curMovesIndicator.text = String(curNumMoves)
+                
+                currentPlayerPosition = proposedPlayerPosition
+                moveBlock(spriteNode: playerBlock, type: "player", toPositions: playerRoutePositions, numBlocks: playerNumMovesArray)
+                
+                if useEnemies && numOfEnemies > 0 {
+                    var enemyRoutePositions = Array<Array<Int>>()
+                    var enemiesRoutePositions = Array<Array<Array<Int>>>()
+                    var proposedEnemyPositions = Array<Array<Int>>()
+                    var enemyNumMovesArray = Array<Int>()
+                    var enemiesNumMovesArray = Array<Array<Int>>()
+                    var hasEnemyMoved = Array<Bool>(repeating: false, count: numOfEnemies)
+                    var enemyMovingRandomly = Array<Bool>(repeating: false, count: numOfEnemies)
+
+                    for index in 0...(numOfEnemies-1) {
+                        
+                        var notFound = false
+                        var enemyDirection = "none"
+                        
+                        // Get individual enemy ideal directions
+                        // Try to move to players new position
+                        if (currentEnemyPositions[index] != currentPlayerPosition) {
+                            (enemyDirection, notFound) = levelGenerator.getSolver().solveForNextMove(level: level, customStart: currentEnemyPositions[index], customEnd: currentPlayerPosition, blockType: "enemy")
+                            enemyMovingRandomly[index] = false
+                        }
+                        
+                        // If the enemy is already at that position, then try the players previous position
+                        else if (currentEnemyPositions[index] != previousPlayerPosition) {
+                            (enemyDirection, notFound) = levelGenerator.getSolver().solveForNextMove(level: level, customStart: currentEnemyPositions[index], customEnd: previousPlayerPosition, blockType: "enemy")
+                            enemyMovingRandomly[index] = false
+                        }
+                        
+                        // If the enemy cannot access either current or previous position, then move in random direction.
+                        if notFound {
+                            var enemyMoved = false
+                            repeat {
+                                enemyDirection = levelGenerator.getSolver().randomDirection()
+                                (enemyRoutePositions, enemyNumMovesArray, _, _) = level.calculateMove(position: currentEnemyPositions[index], direction: enemyDirection, blockType: "enemy")
+                                if enemyRoutePositions.first! != enemyRoutePositions.last! {
+                                    enemyMoved = true
+                                }
+                            } while(!enemyMoved)
+                            enemyMovingRandomly[index] = true
+                        }
+                        
+                        // Store the proposed new positions and routes of the enemies
+                        (enemyRoutePositions, enemyNumMovesArray, _, _) = level.calculateMove(position: currentEnemyPositions[index], direction: enemyDirection, blockType: "enemy")
+                        proposedEnemyPositions.append(enemyRoutePositions.last!)
+                        enemiesRoutePositions.append(enemyRoutePositions)
+                        enemiesNumMovesArray.append(enemyNumMovesArray)
+
+                    }
+                    
+                    // On each loop attempt to move an enemy to an empty position. Loop through numOfEnemies times to allow each enemy to move into a position made available by another enemy moving.
+                    var safeToMove: Bool
+                    for _ in 0...(numOfEnemies-1) {
+                        for currentEnemyIndex in 0...(numOfEnemies-1) {
+                            // Loop through previous enemies
+                            safeToMove = true
+                            for otherEnemyIndex in 0...(numOfEnemies-1) {
+                                if otherEnemyIndex != currentEnemyIndex {
+                                    // Only allow move if new position does not land you on top of another enemy
+                                    if proposedEnemyPositions[currentEnemyIndex] == currentEnemyPositions[otherEnemyIndex] {
+                                        safeToMove = false
+                                        break
+                                    }
                                 }
                             }
+                            
+                            if safeToMove {
+                                currentEnemyPositions[currentEnemyIndex] = proposedEnemyPositions[currentEnemyIndex]
+                                moveBlock(spriteNode: enemyBlocks[currentEnemyIndex], type: "enemy", toPositions: enemiesRoutePositions[currentEnemyIndex], numBlocks: enemiesNumMovesArray[currentEnemyIndex])
+                                hasEnemyMoved[currentEnemyIndex] = true
+                            }
+                            
                         }
                         
-                        if safeToMove {
-                            currentEnemyPositions[currentEnemyIndex] = proposedEnemyPositions[currentEnemyIndex]
-                            moveBlock(spriteNode: enemyBlocks[currentEnemyIndex], type: "enemy", toPositions: enemiesRoutePositions[currentEnemyIndex], numBlocks: enemiesNumMovesArray[currentEnemyIndex])
-                            hasEnemyMoved[currentEnemyIndex] = true
+                        if allEqualTo(array: hasEnemyMoved, value: true) {
+                            break
                         }
-                        
                     }
                     
-                    if allEqualTo(array: hasEnemyMoved, value: true) {
-                        break
+                    for currentEnemyPosition in currentEnemyPositions {
+                        if currentEnemyPosition == currentPlayerPosition {
+                            levelLost = true
+                        }
                     }
+                
                 }
                 
-                for currentEnemyPosition in currentEnemyPositions {
-                    if currentEnemyPosition == currentPlayerPosition {
-                        levelLost = true
-                    }
-                }
-            
+                previousPlayerPosition = currentPlayerPosition
             }
-            
-            previousPlayerPosition = currentPlayerPosition
         
         }
     }
@@ -474,9 +504,10 @@ class GameplayScene: SKScene {
         popupPanel.size = CGSize(width: 800, height: 500)
         popupPanel.zPosition = 11
         
-        let resume = SKSpriteNode(imageNamed: "Play Button")
+        let resume = SKSpriteNode(imageNamed: "Close Button")
         let new = SKSpriteNode(imageNamed: "New Button")
         let quit = SKSpriteNode(imageNamed: "Home Button")
+        let reset = SKSpriteNode(imageNamed: "Reset Button")
     
         popupPanelLabel.name = "Pause Label"
         popupPanelLabel.fontName = "Helvetica"
@@ -488,9 +519,15 @@ class GameplayScene: SKScene {
         
         resume.name = "Resume"
         resume.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        resume.position = CGPoint(x: -250, y: -50)
-        resume.size = CGSize(width: 200, height: 200)
+        resume.position = CGPoint(x: 300, y: 150)
+        resume.size = CGSize(width: 100, height: 100)
         resume.zPosition = 12
+        
+        reset.name = "Reset"
+        reset.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        reset.position = CGPoint(x: -250, y: -50)
+        reset.size = CGSize(width: 200, height: 200)
+        reset.zPosition = 12
         
         new.name = "New"
         new.anchorPoint = CGPoint(x: 0.5, y: 0.5)
@@ -506,6 +543,7 @@ class GameplayScene: SKScene {
         
         popupPanel.addChild(popupPanelLabel)
         popupPanel.addChild(resume)
+        popupPanel.addChild(reset)
         popupPanel.addChild(new)
         popupPanel.addChild(quit)
         

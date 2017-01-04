@@ -42,6 +42,27 @@ class LevelSolution {
         calculatedRoute = Array(repeating: Array(repeating: Array<Array<Int>>(), count: numBlocksX), count: numBlocksY)
     }
     
+    init(otherObject: LevelSolution) {
+        
+        self.numBlocksX = otherObject.numBlocksX
+        self.numBlocksY = otherObject.numBlocksY
+        
+        self.blocksExploration = otherObject.blocksExploration
+        self.calculatedRoute = otherObject.calculatedRoute
+        
+        self.solved = otherObject.solved
+        self.solvable = otherObject.solvable
+        self.stuckable = otherObject.stuckable
+        
+        self.numNumbersUsed = otherObject.numNumbersUsed
+        self.numArrowsUsed = otherObject.numArrowsUsed
+        self.infiniteArrowLoop = otherObject.infiniteArrowLoop
+    }
+    
+    func copy() -> LevelSolution {
+        return LevelSolution(otherObject: self)
+    }
+    
     func randomEnemyPosition(notIn: Array<Array<Int>>, level: Level) -> Array<Int> {
         
         var potentialPositions: Array<Array<Int>>

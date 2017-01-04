@@ -34,6 +34,25 @@ class Level {
         levelSolution = LevelSolution(numBlocksX: numBlocksX, numBlocksY: numBlocksY)
     }
     
+    init(otherObject: Level) {
+        self.numBlocksX = otherObject.numBlocksX
+        self.numBlocksY = otherObject.numBlocksY
+        
+        self.numBlockBlocks = otherObject.numBlockBlocks
+        self.numNumberBlocks = otherObject.numNumberBlocks
+        self.numArrowBlocks = otherObject.numArrowBlocks
+        
+        self.startPosition = otherObject.startPosition
+        self.endPosition = otherObject.endPosition
+        
+        self.blocksReal = otherObject.blocksReal
+        self.levelSolution = otherObject.getSolution().copy()
+    }
+    
+    func copy() -> Level {
+        return Level(otherObject: self)
+    }
+    
     func calculateMove(position: Array<Int>, direction: String, blockType: String)
         -> (positions: Array<Array<Int>>, numMoves: Array<Int>, endBlock: Bool, infiniteArrowLoop: Bool) {
             
