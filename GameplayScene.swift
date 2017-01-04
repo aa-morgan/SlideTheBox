@@ -37,6 +37,7 @@ class GameplayScene: SKScene {
     let levelsLostKey = "Level Lost"
     
     let savedLevelsKey = "Saved Levels"
+    var fileHandler = FileHandler()
     
     var numBlocksX = Int(16)
     var numBlocksY = Int(8)
@@ -213,15 +214,15 @@ class GameplayScene: SKScene {
     
     func saveLevel() {
         print("Level saved")
-        var savedLevels: Array<Array<Array<Int>>>
+        var savedLevels: Array<String>
         
         if UserDefaults.standard.array(forKey: savedLevelsKey) == nil {
-            savedLevels = Array<Array<Array<Int>>>()
+            savedLevels = Array<String>()
             UserDefaults.standard.set(savedLevels, forKey: savedLevelsKey)
         }
         
-        savedLevels = UserDefaults.standard.array(forKey: savedLevelsKey) as! Array<Array<Array<Int>>>
-        savedLevels.append(level.getBlocksReal())
+        savedLevels = UserDefaults.standard.array(forKey: savedLevelsKey) as! Array<String>
+        savedLevels.append(fileHandler.toJSON(level: level))
         UserDefaults.standard.set(savedLevels, forKey: savedLevelsKey)
         
         saveBtn.removeFromParent()

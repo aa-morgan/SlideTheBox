@@ -45,7 +45,7 @@ class SavedLevelsScene: SKScene {
             
             if atPoint(location) == printBtn {
                 if UserDefaults.standard.array(forKey: savedLevelsKey) != nil {
-                    let savedLevels = UserDefaults.standard.array(forKey: savedLevelsKey) as! Array<Array<Array<Int>>>
+                    let savedLevels = UserDefaults.standard.array(forKey: savedLevelsKey) as! Array<String>
                     
                     for savedLevel in savedLevels {
                         print(savedLevel)
@@ -70,7 +70,7 @@ class SavedLevelsScene: SKScene {
         if UserDefaults.standard.array(forKey: savedLevelsKey) == nil {
             count = 0
         } else {
-            count = (UserDefaults.standard.array(forKey: savedLevelsKey) as! Array<Array<Array<Int>>>).count
+            count = (UserDefaults.standard.array(forKey: savedLevelsKey) as! Array<String>).count
         }
         
         levelsSaved.text = String(count)

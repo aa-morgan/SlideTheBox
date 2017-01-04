@@ -14,25 +14,19 @@ class FileHandler {
         
     }
     
-    func toFile(level: Level, filename: String) {
+    func toJSON(level: Level) -> String {
         
         let savedLevel = SavedLevel(numBlocksX: level.numBlocksX, numBlocksY: level.numBlocksY, numBlockBlocks: level.getNumBlockBlocks(), numNumberBlocks: level.getNumNumberBlocks(), numArrowBlocks: level.getNumArrowBlocks(), startPosition: level.getStartPosition(), endPosition: level.getEndPosition(), enemyPositions: level.getEnemyPositions(), blocksReal: level.getBlocksReal())
         
-        let jsonString = savedLevel.toJSON()
-        
-        // Write string to file
-        
+        return savedLevel.toJSON()!
     }
     
-    func fromFile(filename: String) -> Level {
+    func fromJSON(jsonString: String) -> Level {
         
-        // Read string from file
-        let jsonString = String?("")
+        let level = Level()
         
-        var level = Level()
-        
-        var data = jsonString?.data(using: .utf8)!
-        if let parsedData = try? JSONSerialization.jsonObject(with: data!) as! [String:Any] {
+        let data = jsonString.data(using: .utf8)!
+        if let parsedData = try? JSONSerialization.jsonObject(with: data) as! [String:Any] {
             let numBlocksX = parsedData["numBlocksX"] as! Int
             let numBlocksY = parsedData["numBlocksY"] as! Int
             
