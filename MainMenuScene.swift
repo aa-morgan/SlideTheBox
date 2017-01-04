@@ -13,6 +13,7 @@ class MainMenuScene: SKScene {
     var playBtn = SKSpriteNode()
     var settingsBtn = SKSpriteNode()
     var statsBtn = SKSpriteNode()
+    var savedLevelsBtn = SKSpriteNode()
     
     var title = SKLabelNode()
     var score = SKLabelNode()
@@ -50,6 +51,12 @@ class MainMenuScene: SKScene {
                 self.view?.presentScene(statsScene!)
             }
             
+            if atPoint(location) == savedLevelsBtn {
+                let savedLevelsScene = SavedLevelsScene(fileNamed: "SavedLevelsScene")
+                savedLevelsScene!.scaleMode = .aspectFill
+                self.view?.presentScene(savedLevelsScene!)
+            }
+            
         }
         
     }
@@ -63,6 +70,7 @@ class MainMenuScene: SKScene {
         playBtn = self.childNode(withName: "Play Button") as! SKSpriteNode
         statsBtn = self.childNode(withName: "Stats Button") as! SKSpriteNode
         settingsBtn = self.childNode(withName: "Settings Button") as! SKSpriteNode
+        savedLevelsBtn = self.childNode(withName: "Saved Levels Button") as! SKSpriteNode
     }
     
     func getLabel() {

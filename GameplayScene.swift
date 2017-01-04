@@ -12,6 +12,7 @@ class GameplayScene: SKScene {
     
     var pauseBtn = SKSpriteNode()
     var hintBtn = SKSpriteNode()
+    var saveBtn = SKSpriteNode()
     var minMovesIndicator = SKLabelNode()
     var curMovesIndicator = SKLabelNode()
     
@@ -34,6 +35,8 @@ class GameplayScene: SKScene {
     let levelsAttemptedKey = "Level Attempted"
     let levelsCompletedKey = "Level Completed"
     let levelsLostKey = "Level Lost"
+    
+    let savedLevelsKey = "Saved Levels"
     
     var numBlocksX = Int(16)
     var numBlocksY = Int(8)
@@ -78,6 +81,10 @@ class GameplayScene: SKScene {
                 if (!levelPaused && !levelComplete) {
                     hintButtonPressed()
                 }
+            }
+            
+            if atPoint(location).name == "Save" {
+                saveLevel()
             }
             
             if atPoint(location).name == "Home" {
@@ -130,8 +137,12 @@ class GameplayScene: SKScene {
     }
     
     func setupMenuBar() {
-        pauseBtn = self.childNode(withName: "Pause") as! SKSpriteNode
-        hintBtn = self.childNode(withName: "Hint") as! SKSpriteNode
+        pauseBtn = self.childNode(withName: "Pause Button") as! SKSpriteNode
+        pauseBtn.name = "Pause"
+        hintBtn = self.childNode(withName: "Hint Button") as! SKSpriteNode
+        hintBtn.name = "Hint"
+        saveBtn = self.childNode(withName: "Save Button") as! SKSpriteNode
+        saveBtn.name =  "Save"
         
         minMovesIndicator = self.childNode(withName: "Minimum Moves") as! SKLabelNode
         curMovesIndicator = self.childNode(withName: "Number Moves") as! SKLabelNode
@@ -196,6 +207,22 @@ class GameplayScene: SKScene {
         levelCanvas.removeFromParent()
         level = levelCopy.copy()
         loadLevel()
+    }
+    
+    func saveLevel() {
+        print("Level saved")
+        var savedLevels: Array<Array<Array<Int>>>
+        
+        if UserDefaults.standard.array(forKey: savedLevelsKey) == nil {
+            savedLevels = Array<Array<Array<Int>>>()
+            UserDefaults.standard.set(savedLevels, forKey: savedLevelsKey)
+        }
+        
+        savedLevels = UserDefaults.standard.array(forKey: savedLevelsKey) as! Array<Array<Array<Int>>>
+        savedLevels.append(level.getBlocksReal())
+        UserDefaults.standard.set(savedLevels, forKey: savedLevelsKey)
+        
+        saveBtn.removeFromParent()
     }
     
     func setupPlayerBox(columnIndex: Int, rowIndex: Int) {
