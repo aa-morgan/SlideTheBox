@@ -15,6 +15,11 @@
 		F34BAFC81E18831C00B15F34 /* LevelSolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = F34BAFC71E18831C00B15F34 /* LevelSolution.swift */; };
 		F34F3B7E1E1D662700C190AF /* SavedLevelsScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = F34F3B7D1E1D662700C190AF /* SavedLevelsScene.sks */; };
 		F34F3B801E1D663100C190AF /* SavedLevelsScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = F34F3B7F1E1D663100C190AF /* SavedLevelsScene.swift */; };
+		F34F3B821E1D6E8000C190AF /* Levels in Resources */ = {isa = PBXBuildFile; fileRef = F34F3B811E1D6E8000C190AF /* Levels */; };
+		F34F3B841E1DA6DB00C190AF /* SavedLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F34F3B831E1DA6DB00C190AF /* SavedLevel.swift */; };
+		F34F3B871E1DAA5500C190AF /* JSONRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F34F3B861E1DAA5500C190AF /* JSONRepresentable.swift */; };
+		F34F3B891E1DAA6100C190AF /* JSONSerialisable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F34F3B881E1DAA6100C190AF /* JSONSerialisable.swift */; };
+		F34F3B8B1E1DB34900C190AF /* FileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F34F3B8A1E1DB34900C190AF /* FileHandler.swift */; };
 		F3895D931E181478007180BF /* Level.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3895D921E181478007180BF /* Level.swift */; };
 		F3895D951E181480007180BF /* LevelProposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3895D941E181480007180BF /* LevelProposer.swift */; };
 		F3895D971E181487007180BF /* LevelSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3895D961E181487007180BF /* LevelSolver.swift */; };
@@ -60,6 +65,11 @@
 		F34BAFC71E18831C00B15F34 /* LevelSolution.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelSolution.swift; sourceTree = "<group>"; };
 		F34F3B7D1E1D662700C190AF /* SavedLevelsScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SavedLevelsScene.sks; sourceTree = "<group>"; };
 		F34F3B7F1E1D663100C190AF /* SavedLevelsScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SavedLevelsScene.swift; sourceTree = "<group>"; };
+		F34F3B811E1D6E8000C190AF /* Levels */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Levels; path = Assests/Levels; sourceTree = "<group>"; };
+		F34F3B831E1DA6DB00C190AF /* SavedLevel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SavedLevel.swift; sourceTree = "<group>"; };
+		F34F3B861E1DAA5500C190AF /* JSONRepresentable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONRepresentable.swift; sourceTree = "<group>"; };
+		F34F3B881E1DAA6100C190AF /* JSONSerialisable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONSerialisable.swift; sourceTree = "<group>"; };
+		F34F3B8A1E1DB34900C190AF /* FileHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileHandler.swift; sourceTree = "<group>"; };
 		F3895D921E181478007180BF /* Level.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Level.swift; sourceTree = "<group>"; };
 		F3895D941E181480007180BF /* LevelProposer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelProposer.swift; sourceTree = "<group>"; };
 		F3895D961E181487007180BF /* LevelSolver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelSolver.swift; sourceTree = "<group>"; };
@@ -110,6 +120,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F34F3B851E1DAA4A00C190AF /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				F34F3B831E1DA6DB00C190AF /* SavedLevel.swift */,
+				F34F3B8A1E1DB34900C190AF /* FileHandler.swift */,
+				F34F3B861E1DAA5500C190AF /* JSONRepresentable.swift */,
+				F34F3B881E1DAA6100C190AF /* JSONSerialisable.swift */,
+			);
+			name = Storage;
+			sourceTree = "<group>";
+		};
 		F3B4DF591DF4899700BA4725 = {
 			isa = PBXGroup;
 			children = (
@@ -177,6 +198,7 @@
 		F3F929B21DF785790000FFB1 /* Level classes */ = {
 			isa = PBXGroup;
 			children = (
+				F34F3B851E1DAA4A00C190AF /* Storage */,
 				F3D2EA751DFDEDEE00FAE267 /* LevelGenerator.swift */,
 				F33387D91E06065600FC9092 /* LevelGeneratorStatistics.swift */,
 				F3895D921E181478007180BF /* Level.swift */,
@@ -203,6 +225,7 @@
 		F3F929B41DF785990000FFB1 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				F34F3B811E1D6E8000C190AF /* Levels */,
 				F3F929B61DF785AE0000FFB1 /* Sounds */,
 				F3F929B51DF785AA0000FFB1 /* Fonts */,
 			);
@@ -350,6 +373,7 @@
 				F315A3BF1E1C572000791317 /* StatsScene.sks in Resources */,
 				F34F3B7E1E1D662700C190AF /* SavedLevelsScene.sks in Resources */,
 				F315A3BB1E1C430800791317 /* SettingsScene.sks in Resources */,
+				F34F3B821E1D6E8000C190AF /* Levels in Resources */,
 				F3B4DF731DF4899700BA4725 /* Assets.xcassets in Resources */,
 				F3B4DF761DF4899700BA4725 /* LaunchScreen.storyboard in Resources */,
 				F3F929DC1DF7867A0000FFB1 /* GameplayScene.sks in Resources */,
@@ -381,12 +405,16 @@
 				F3895D951E181480007180BF /* LevelProposer.swift in Sources */,
 				F3F929D51DF786320000FFB1 /* GameplayScene.swift in Sources */,
 				F3895D971E181487007180BF /* LevelSolver.swift in Sources */,
+				F34F3B841E1DA6DB00C190AF /* SavedLevel.swift in Sources */,
 				F3D2EA761DFDEDEE00FAE267 /* LevelGenerator.swift in Sources */,
 				F34BAFC81E18831C00B15F34 /* LevelSolution.swift in Sources */,
 				F3B4DF6E1DF4899700BA4725 /* GameViewController.swift in Sources */,
 				F33387DA1E06065600FC9092 /* LevelGeneratorStatistics.swift in Sources */,
+				F34F3B891E1DAA6100C190AF /* JSONSerialisable.swift in Sources */,
+				F34F3B871E1DAA5500C190AF /* JSONRepresentable.swift in Sources */,
 				F34F3B801E1D663100C190AF /* SavedLevelsScene.swift in Sources */,
 				F3F929D31DF7861F0000FFB1 /* MainMenuScene.swift in Sources */,
+				F34F3B8B1E1DB34900C190AF /* FileHandler.swift in Sources */,
 				F315A3BD1E1C571500791317 /* StatsScene.swift in Sources */,
 				F3895D991E181499007180BF /* DifficultyCriteria.swift in Sources */,
 				F315A3B91E1C42F200791317 /* SettingsScene.swift in Sources */,

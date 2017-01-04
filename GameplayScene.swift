@@ -104,6 +104,8 @@ class GameplayScene: SKScene {
                 popupPanel.removeFromParent()
                 self.scene?.isPaused = false
                 levelPaused = false
+                playerIsMoving = false
+                enemiesMoving = 0
             }
             
             if atPoint(location).name == "New" {
@@ -297,11 +299,11 @@ class GameplayScene: SKScene {
         
         // Reset
         enemyBlocks = Array<SKSpriteNode>()
-        currentEnemyPositions = Array<Array<Int>>()
+        currentEnemyPositions = level.getEnemyPositions()
         
-        for _ in 1...numOfEnemies {
+        for index in 0...(numOfEnemies-1) {
             
-            let enemyPosition = level.getSolution().randomEnemyPosition(notIn: currentEnemyPositions, level: level)
+            let enemyPosition = currentEnemyPositions[index]
             let columnIndex = enemyPosition[0]
             let rowIndex = enemyPosition[1]
             
@@ -313,7 +315,6 @@ class GameplayScene: SKScene {
             enemyBlock.zPosition = 7
             
             enemyBlocks.append(enemyBlock)
-            currentEnemyPositions.append(enemyPosition)
             levelCanvas.addChild(enemyBlock)
         }
         
@@ -590,6 +591,7 @@ class GameplayScene: SKScene {
         
         let new = SKSpriteNode(imageNamed: "New Button")
         let quit = SKSpriteNode(imageNamed: "Home Button")
+        let reset = SKSpriteNode(imageNamed: "Reset Button")
         
         popupPanelLabel.name = "Level Complete Label"
         popupPanelLabel.fontName = "Helvetica"
@@ -599,19 +601,26 @@ class GameplayScene: SKScene {
         popupPanelLabel.position = CGPoint(x: 0, y: 120)
         popupPanelLabel.zPosition = 11
         
+        reset.name = "Reset"
+        reset.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        reset.position = CGPoint(x: -250, y: -50)
+        reset.size = CGSize(width: 200, height: 200)
+        reset.zPosition = 12
+        
         new.name = "New"
         new.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        new.position = CGPoint(x: -150, y: -50)
+        new.position = CGPoint(x: 0, y: -50)
         new.size = CGSize(width: 200, height: 200)
         new.zPosition = 12
         
         quit.name = "Home"
         quit.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        quit.position = CGPoint(x: 150, y: -50)
+        quit.position = CGPoint(x: 250, y: -50)
         quit.size = CGSize(width: 200, height: 200)
         quit.zPosition = 12
         
         popupPanel.addChild(popupPanelLabel)
+        popupPanel.addChild(reset)
         popupPanel.addChild(new)
         popupPanel.addChild(quit)
         
@@ -631,6 +640,7 @@ class GameplayScene: SKScene {
         
         let new = SKSpriteNode(imageNamed: "New Button")
         let quit = SKSpriteNode(imageNamed: "Home Button")
+        let reset = SKSpriteNode(imageNamed: "Reset Button")
         
         popupPanelLabel.name = "Game Over Label"
         popupPanelLabel.fontName = "Helvetica"
@@ -640,19 +650,26 @@ class GameplayScene: SKScene {
         popupPanelLabel.position = CGPoint(x: 0, y: 120)
         popupPanelLabel.zPosition = 11
         
+        reset.name = "Reset"
+        reset.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        reset.position = CGPoint(x: -250, y: -50)
+        reset.size = CGSize(width: 200, height: 200)
+        reset.zPosition = 12
+        
         new.name = "New"
         new.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        new.position = CGPoint(x: -150, y: -50)
+        new.position = CGPoint(x: 0, y: -50)
         new.size = CGSize(width: 200, height: 200)
         new.zPosition = 12
         
         quit.name = "Home"
         quit.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        quit.position = CGPoint(x: 150, y: -50)
+        quit.position = CGPoint(x: 250, y: -50)
         quit.size = CGSize(width: 200, height: 200)
         quit.zPosition = 12
         
         popupPanel.addChild(popupPanelLabel)
+        popupPanel.addChild(reset)
         popupPanel.addChild(new)
         popupPanel.addChild(quit)
         

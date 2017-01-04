@@ -19,6 +19,7 @@ class Level {
     
     var startPosition = Array<Int>()
     var endPosition = Array<Int>()
+    var enemyPositions = Array<Array<Int>>()
     
     var blocksReal = Array<Array<Int>>()
     var levelSolution = LevelSolution()
@@ -44,6 +45,7 @@ class Level {
         
         self.startPosition = otherObject.startPosition
         self.endPosition = otherObject.endPosition
+        self.enemyPositions = otherObject.enemyPositions
         
         self.blocksReal = otherObject.blocksReal
         self.levelSolution = otherObject.getSolution().copy()
@@ -98,7 +100,7 @@ class Level {
                     (col, row) = incrementPosition(col: col, row: row, direction: currentDirection, amount: 1)
                     
                     if (row >= 0 && row < numBlocksY) && (col >= 0 && col < numBlocksX) {
-                        if blocksReal[row][col] == 0 || blocksReal[row][col] == 8 { // Empty or start Block
+                        if blocksReal[row][col] == 0 || blocksReal[row][col] == 8 || blocksReal[row][col] == 7 { // Empty or start Blocks
                             numMoves += 1
                         } else if blocksReal[row][col] == 9 && blockType == "player" { // End Block
                             numMoves += 1
@@ -143,6 +145,17 @@ class Level {
             } while(hitArrow)
             
             return (positions: positions, numMoves: numMovesArray, endBlock: endBlock, infiniteArrowLoop: infiniteArrowLoop)
+    }
+    
+    func addEnemies(numOfEnemies: Int) {
+        
+        enemyPositions = Array<Array<Int>>()
+        
+        for _ in 1...numOfEnemies {
+            let enemyPosition = levelSolution.randomEnemyPosition(notIn: enemyPositions, level: self)
+            blocksReal[enemyPosition[1]][enemyPosition[0]] = 7
+            enemyPositions.append(enemyPosition)
+        }
     }
     
     func twoDimMax(array: Array<Array<Int>>) -> (value: Int, index: Array<Int>) {
@@ -289,6 +302,10 @@ class Level {
         }
         
         return arrowDirection
+    }
+    
+    func getEnemyPositions() -> Array<Array<Int>> {
+        return self.enemyPositions
     }
     
 }
