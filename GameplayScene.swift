@@ -346,7 +346,7 @@ class GameplayScene: SKScene {
         }
     }
     
-    func handleSwipe(sender: UISwipeGestureRecognizer) {
+    @objc func handleSwipe(sender: UISwipeGestureRecognizer) {
         
         if (sender.direction.rawValue == 1){
             handleMove(direction: "right")

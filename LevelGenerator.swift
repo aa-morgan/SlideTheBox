@@ -117,7 +117,7 @@ class LevelGenerator {
         let precision = 10000
         let seed1 = Float(arc4random_uniform(UInt32(precision))) / Float(precision)
         let seed2 = Float(arc4random_uniform(UInt32(precision))) / Float(precision)
-        let blockCount = ( pow( -2.0 * log( seed1 ), 0.5 ) * cos( 2 * Float(M_PI) * seed2 ) * stddev ) + mean;
+        let blockCount = ( pow( -2.0 * log( seed1 ), 0.5 ) * cos( 2 * Float(Double.pi) * seed2 ) * stddev ) + mean;
         return Int(floor(blockCount))
     }
     
