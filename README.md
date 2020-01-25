@@ -3,7 +3,7 @@
 
 <img src="images/menu-screen.gif" width="600" height="337" />
 
-A grid-based iOS puzzle game. The aim is to reach the `red block` by sliding the `green box` (you) in order to navigate the maze. Levels are randomly generated and are always completable, I promise! If you don't beleive me then you can use the `hint` button (question mark) to help you find your way.
+A grid-based iOS puzzle game. The aim is to reach the `red block` by sliding the `green box` (player) in order to navigate the maze. Levels are randomly generated and are always completable, I promise! If you don't believe me then you can use the `hint` button (question mark) to help you find your way.
 
 <img src="images/basic-level.gif" width="600" height="337" />
 

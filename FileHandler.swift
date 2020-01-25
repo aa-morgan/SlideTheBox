@@ -26,7 +26,7 @@ class FileHandler {
         let level = Level()
         
         let data = jsonString.data(using: .utf8)!
-        if let parsedData = try? JSONSerialization.jsonObject(with: data) as! [String:Any] {
+        if let parsedData = try? JSONSerialization.jsonObject(with: data) as? [String:Any] {
             let numBlocksX = parsedData["numBlocksX"] as! Int
             let numBlocksY = parsedData["numBlocksY"] as! Int
             

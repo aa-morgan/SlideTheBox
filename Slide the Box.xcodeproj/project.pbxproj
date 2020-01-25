@@ -321,26 +321,26 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0810;
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = "Alex Morgan";
 				TargetAttributes = {
 					F3B4DF611DF4899700BA4725 = {
 						CreatedOnToolsVersion = 8.1;
 						DevelopmentTeam = KBPSNU442Q;
-						LastSwiftMigration = 1000;
+						LastSwiftMigration = 1130;
 						ProvisioningStyle = Automatic;
 					};
 					F3B4DF7B1DF4899700BA4725 = {
 						CreatedOnToolsVersion = 8.1;
 						DevelopmentTeam = KBPSNU442Q;
-						LastSwiftMigration = 1000;
+						LastSwiftMigration = 1130;
 						ProvisioningStyle = Automatic;
 						TestTargetID = F3B4DF611DF4899700BA4725;
 					};
 					F3B4DF861DF4899700BA4725 = {
 						CreatedOnToolsVersion = 8.1;
 						DevelopmentTeam = KBPSNU442Q;
-						LastSwiftMigration = 1000;
+						LastSwiftMigration = 1130;
 						ProvisioningStyle = Automatic;
 						TestTargetID = F3B4DF611DF4899700BA4725;
 					};
@@ -348,7 +348,7 @@
 			};
 			buildConfigurationList = F3B4DF5D1DF4899700BA4725 /* Build configuration list for PBXProject "Slide the Box" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -481,6 +481,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -540,6 +541,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -598,7 +600,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "axm108.Slide-the-Box";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -612,7 +614,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "axm108.Slide-the-Box";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -627,7 +629,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "axm108.Slide-the-BoxTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Slide the Box.app/Slide the Box";
 			};
 			name = Debug;
@@ -643,7 +645,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "axm108.Slide-the-BoxTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Slide the Box.app/Slide the Box";
 			};
 			name = Release;
@@ -658,7 +660,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "axm108.Slide-the-BoxUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TEST_TARGET_NAME = "Slide the Box";
 			};
 			name = Debug;
@@ -673,7 +675,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "axm108.Slide-the-BoxUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TEST_TARGET_NAME = "Slide the Box";
 			};
 			name = Release;

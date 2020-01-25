@@ -168,7 +168,7 @@ class Level {
             let tempMax = curRow.max()
             if (tempMax! > globalMax) {
                 globalMax = tempMax!
-                globalIndex = [curRow.index(of: tempMax!)!,row]
+                globalIndex = [curRow.firstIndex(of: tempMax!)!,row]
             }
             row += 1
         }
