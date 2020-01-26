@@ -90,7 +90,7 @@ class GameplayScene: SKScene {
             
             if atPoint(location).name == "Home" {
                 let mainMenu = MainMenuScene(fileNamed: "MainMenuScene")
-                mainMenu!.scaleMode = .aspectFill
+                mainMenu!.scaleMode = .aspectFit
                 self.view?.presentScene(mainMenu!)
             }
             
@@ -111,7 +111,7 @@ class GameplayScene: SKScene {
             
             if atPoint(location).name == "New" {
                 let gameplay = GameplayScene(fileNamed: "GameplayScene")
-                gameplay!.scaleMode = .aspectFill
+                gameplay!.scaleMode = .aspectFit
                 self.view?.presentScene(gameplay!)
             }
         }

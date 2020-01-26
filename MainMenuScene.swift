@@ -34,26 +34,26 @@ class MainMenuScene: SKScene {
             
             if atPoint(location) == playBtn {
                 let gameplayScene = GameplayScene(fileNamed: "GameplayScene")
-                gameplayScene!.scaleMode = .aspectFill
+                gameplayScene!.scaleMode = .aspectFit
                 //self.view?.presentScene(gameplayScene!, transition: SKTransition.doorway(withDuration: TimeInterval(1.5)))
                 self.view?.presentScene(gameplayScene!)
             }
             
             if atPoint(location) == settingsBtn {
                 let settingsScene = SettingsScene(fileNamed: "SettingsScene")
-                settingsScene!.scaleMode = .aspectFill
+                settingsScene!.scaleMode = .aspectFit
                 self.view?.presentScene(settingsScene!)
             }
             
             if atPoint(location) == statsBtn {
                 let statsScene = StatsScene(fileNamed: "StatsScene")
-                statsScene!.scaleMode = .aspectFill
+                statsScene!.scaleMode = .aspectFit
                 self.view?.presentScene(statsScene!)
             }
             
             if atPoint(location) == savedLevelsBtn {
                 let savedLevelsScene = SavedLevelsScene(fileNamed: "SavedLevelsScene")
-                savedLevelsScene!.scaleMode = .aspectFill
+                savedLevelsScene!.scaleMode = .aspectFit
                 self.view?.presentScene(savedLevelsScene!)
             }
             

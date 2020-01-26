@@ -34,7 +34,7 @@ class SavedLevelsScene: SKScene {
             
             if atPoint(location) == homeBtn {
                 let mainMenuScene = MainMenuScene(fileNamed: "MainMenuScene")
-                mainMenuScene!.scaleMode = .aspectFill
+                mainMenuScene!.scaleMode = .aspectFit
                 self.view?.presentScene(mainMenuScene!)
             }
             
